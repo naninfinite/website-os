@@ -54,3 +54,17 @@ Model usage:
     - Files touched
     - Commit hash (when available)
     - Notes on docs/BUGS updates
+
+    - Git Hygiene:
+  - Keep commits small, atomic, and descriptive.
+  - Separate commits by type:
+    - "chore": setup / infra / config / docs-only
+    - "feat": new feature or scaffolded functionality
+    - "fix": bug fixes (reference BUG ID if relevant)
+    - "refactor": code change without behavior change
+    - "docs": documentation-only
+  - When generating code + docs, propose commit message(s) at the end:
+    - e.g., "chore: apply master prompt bootstrap (initial src + docs updates)"
+    - e.g., "feat(sprint1): scaffold chunk1 (layoutProfiles + shell baseline)"
+  - Do not mix infra changes with feature scaffolds in the same commit.
+  - Always update CHANGELOG under [Unreleased] in the same commit as the change.

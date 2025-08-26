@@ -12,6 +12,7 @@ A public **countdown** flips the active era with a **reboot animation**.
 ```bash
 pnpm i      # or: npm i
 pnpm dev    # or: npm run dev
+Run locally: Vite dev server runs on `http://localhost:5173` by default. Use `npm run preview` for a production preview.
 
 Docs
 	•	PRD (spec): docs/dev/PRD.md

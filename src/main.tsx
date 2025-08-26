@@ -5,8 +5,9 @@
  */
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import './themes/tokens.css';
 import './styles/index.css';
-import { App } from './root/App';
+import { App } from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

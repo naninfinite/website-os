@@ -24,3 +24,4 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - A small timer badge counts down to the next era flip.
 - On desktop, you can open simple app windows from a toolbar.
 - On mobile, the home screen shows a list (Terminal-OS) or grid (OS-91/Now-OS) of apps. Tapping opens the app full-screen.
+ - New: Desktop vs Mobile render differently via a layout profile. Desktop shows a big placeholder shell; Mobile shows a simple list or grid based on the active era.

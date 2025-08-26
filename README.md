@@ -18,6 +18,7 @@ Docs
 	•	Developer docs: docs/dev/*
 	•	Easy-Docs (plain English): docs/easy/*
 	•	Daily/Sprint log: docs/log/*
+	•	Decisions / ADRs: docs/decisions/*
 	•	Bug tracker: BUGS.md
 
 ⸻
@@ -41,3 +42,13 @@ Every change must update:
 	•	docs/easy/* (plain English)
 	•	docs/log/YYYY-MM-DD.md (daily log)
 	•	BUGS.md if relevant
+
+Note: Create a `.env` or `.env.local` in the project root and set `VITE_ERA_SCHEDULE_URL` (e.g., `/era-schedule.json`) before running the app in production.
+
+## Testing
+
+Run the test suite with:
+
+```bash
+npm run test
+```

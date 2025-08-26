@@ -49,8 +49,15 @@ Note: Create a `.env` or `.env.local` in the project root and set `VITE_ERA_SCHE
 ### Sprint 1 Status
 - Era layout profiles implemented (`src/shell/layoutProfiles.ts`)
 - Countdown reads schedule from `VITE_ERA_SCHEDULE_URL` and exposes `onEraFlip` via `useCountdown`
-- Desktop WindowManager (MVP) and Mobile AppContainerPage wired
+- Desktop WindowManager (MVP) now supports open, move (drag + arrows), minimize/restore, focus/z-order, and a simple taskbar. See `src/shell/windowing/WindowManager.tsx`.
+- Mobile: apps open full-page via `src/shell/mobile/AppContainerPage.tsx`; Home renders list/grid per era in `src/shell/mobile/Home.tsx`.
 - AppRegistry opens stubs for all apps; Mobile Home switches list/grid per era
+
+## Countdown, Schedule, and Reboot
+- The app loads an era schedule from `VITE_ERA_SCHEDULE_URL` (see `public/era-schedule.json`).
+- A visible countdown shows time remaining in the current era (dd:hh:mm:ss).
+- When it reaches zero, a Reboot overlay appears for ~3 seconds, then the era flips and theme tokens update via `body[data-era]`.
+- Components consume tokens from CSS variables (see `src/themes/tokens.css` and `src/themes/eraThemes.css`).
 
 ## Testing
 

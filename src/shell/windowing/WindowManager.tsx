@@ -1,56 +1,239 @@
 /**
  * SUMMARY
- * Minimal WindowManager for desktop: maintains a list of open windows and
- * renders their contents stacked. Drag/resize is deferred to later sprints.
+ * WindowManager MVP for desktop: open, move (drag + arrows), minimize/restore,
+ * focus/z-order, and a simple taskbar. Resizing is deferred.
  */
-import React, { useState } from 'react';
-import { AppStub } from '../app-registry';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AppStub, getAppMeta } from '../app-registry';
 import type { AppId } from '../app-registry/types';
 
-export type WindowSpec = { id: string; appId: AppId; title: string };
+export type WindowSpec = {
+  id: string;
+  appId: AppId;
+  title: string;
+  x: number;
+  y: number;
+  minimized: boolean;
+  z: number; // larger means on top
+};
+
+type DragState = {
+  id: string;
+  startMouseX: number;
+  startMouseY: number;
+  startX: number;
+  startY: number;
+} | null;
+
+const DESKTOP_PADDING = 8;
 
 export function WindowManager(): JSX.Element {
   const [windows, setWindows] = useState<WindowSpec[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [zCounter, setZCounter] = useState<number>(1);
+  const dragRef = useRef<DragState>(null);
+
+  // Stable app list to open
+  const apps: AppId[] = useMemo(
+    () => ['about', 'projects', 'gallery', 'settings', 'connect', 'arcade', 'dimension'],
+    []
+  );
 
   const openApp = (id: AppId) => {
-    const spec: WindowSpec = { id: `${id}-${Date.now()}`, appId: id, title: id };
-    setWindows((w) => [...w, spec]);
+    const meta = getAppMeta(id);
+    // Cascade new windows slightly
+    const openCount = windows.length;
+    const x = DESKTOP_PADDING + (openCount * 24) % 200;
+    const y = 80 + (openCount * 24) % 160;
+    const z = zCounter + 1;
+    setZCounter(z);
+    const spec: WindowSpec = {
+      id: `${id}-${Date.now()}`,
+      appId: id,
+      title: meta.title,
+      x,
+      y,
+      minimized: false,
+      z,
+    };
+    setWindows((prev) => [...prev, spec]);
+    setActiveId(spec.id);
   };
 
-  const closeWindow = (id: string) => setWindows((w) => w.filter((win) => win.id !== id));
+  const closeWindow = (id: string) => {
+    setWindows((w) => w.filter((win) => win.id !== id));
+    setActiveId((cur) => (cur === id ? null : cur));
+  };
+
+  const minimizeWindow = (id: string) =>
+    setWindows((w) => w.map((win) => (win.id === id ? { ...win, minimized: true } : win)));
+
+  const restoreWindow = (id: string) => {
+    setWindows((w) =>
+      w.map((win) => (win.id === id ? { ...win, minimized: false, z: zCounter + 1 } : win))
+    );
+    setZCounter((z) => z + 1);
+    setActiveId(id);
+  };
+
+  const focusWindow = (id: string) => {
+    setWindows((w) => w.map((win) => (win.id === id ? { ...win, z: zCounter + 1 } : win)));
+    setZCounter((z) => z + 1);
+    setActiveId(id);
+  };
+
+  // Drag handling using window listeners for smoothness
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      if (!dragRef.current) return;
+      const { id, startMouseX, startMouseY, startX, startY } = dragRef.current;
+      const dx = e.clientX - startMouseX;
+      const dy = e.clientY - startMouseY;
+      setWindows((wins) =>
+        wins.map((w) => (w.id === id ? { ...w, x: Math.max(DESKTOP_PADDING, startX + dx), y: Math.max(0, startY + dy) } : w))
+      );
+    };
+    const onUp = () => {
+      dragRef.current = null;
+    };
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onUp);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mouseup', onUp);
+    };
+  }, []);
+
+  const beginDrag = (id: string, e: React.MouseEvent) => {
+    // Only left button
+    if (e.button !== 0) return;
+    const w = windows.find((w) => w.id === id);
+    if (!w) return;
+    focusWindow(id);
+    dragRef.current = {
+      id,
+      startMouseX: e.clientX,
+      startMouseY: e.clientY,
+      startX: w.x,
+      startY: w.y,
+    };
+  };
+
+  const onTitleKeyDown = (id: string, e: React.KeyboardEvent) => {
+    const nudge = (dx: number, dy: number) =>
+      setWindows((wins) => wins.map((w) => (w.id === id ? { ...w, x: Math.max(DESKTOP_PADDING, w.x + dx), y: Math.max(0, w.y + dy) } : w)));
+    switch (e.key) {
+      case 'ArrowUp':
+        e.preventDefault();
+        nudge(0, -10);
+        focusWindow(id);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        nudge(0, 10);
+        focusWindow(id);
+        break;
+      case 'ArrowLeft':
+        e.preventDefault();
+        nudge(-10, 0);
+        focusWindow(id);
+        break;
+      case 'ArrowRight':
+        e.preventDefault();
+        nudge(10, 0);
+        focusWindow(id);
+        break;
+      case 'Escape':
+        minimizeWindow(id);
+        break;
+    }
+  };
+
+  const running = windows;
+  const minimized = windows.filter((w) => w.minimized);
 
   return (
-    <div className="h-full w-full relative">
-      <div className="p-2 flex gap-2">
-        {(['about', 'projects', 'gallery', 'settings', 'connect', 'arcade', 'dimension'] as AppId[]).map(
-          (app) => (
-            <button
-              key={app}
-              className="px-3 py-1 rounded bg-foreground/10 hover:bg-foreground/20"
-              onClick={() => openApp(app)}
-            >
-              {app}
-            </button>
-          )
-        )}
+    <div className="h-full w-full relative select-none" aria-label="Desktop">
+      {/* Launcher */}
+      <div className="p-2 flex flex-wrap gap-2">
+        {apps.map((app) => (
+          <button
+            key={app}
+            className="px-3 py-1 rounded bg-foreground/10 hover:bg-foreground/20 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
+            onClick={() => openApp(app)}
+            aria-label={`Open ${app}`}
+          >
+            {app}
+          </button>
+        ))}
       </div>
 
-      <div className="absolute inset-0 pointer-events-none">
-        {windows.map((win, idx) => (
-          <div
-            key={win.id}
-            className="absolute left-8 top-20 w-[min(80vw,900px)] bg-background/95 border border-foreground/20 shadow-lg pointer-events-auto"
-            style={{ zIndex: 10 + idx }}
-          >
-            <div className="flex items-center justify-between px-3 py-2 border-b border-foreground/10 bg-foreground/5">
-              <span className="text-sm font-medium">{win.title}</span>
-              <button className="text-sm opacity-70 hover:opacity-100" onClick={() => closeWindow(win.id)}>
-                ✕
-              </button>
+      {/* Windows layer */}
+      <div className="absolute inset-0 pointer-events-none" aria-live="polite">
+        {running
+          .filter((w) => !w.minimized)
+          .sort((a, b) => a.z - b.z)
+          .map((win) => (
+            <div
+              key={win.id}
+              role="dialog"
+              aria-modal={false}
+              aria-labelledby={`${win.id}-title`}
+              tabIndex={-1}
+              className="absolute w-[min(80vw,900px)] bg-background/95 border border-foreground/20 shadow-lg pointer-events-auto"
+              style={{ transform: `translate(${win.x}px, ${win.y}px)`, zIndex: win.z }}
+              onMouseDown={() => focusWindow(win.id)}
+            >
+              <div
+                className="flex items-center justify-between px-3 py-2 border-b border-foreground/10 bg-foreground/5 cursor-move"
+                onMouseDown={(e) => beginDrag(win.id, e)}
+                onKeyDown={(e) => onTitleKeyDown(win.id, e)}
+                tabIndex={0}
+                id={`${win.id}-title`}
+              >
+                <span className="text-sm font-medium">{win.title}</span>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="text-sm opacity-80 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
+                    onClick={() => minimizeWindow(win.id)}
+                    aria-label="Minimize"
+                  >
+                    _
+                  </button>
+                  <button
+                    className="text-sm opacity-80 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
+                    onClick={() => closeWindow(win.id)}
+                    aria-label="Close"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+              <AppStub id={win.appId} />
             </div>
-            <AppStub id={win.appId} />
-          </div>
+          ))}
+      </div>
+
+      {/* Taskbar */}
+      <div className="absolute bottom-0 left-0 right-0 p-2 flex gap-2 bg-foreground/5 border-t border-foreground/10 pointer-events-auto">
+        {running.map((w) => (
+          <button
+            key={w.id}
+            className={`px-3 py-1 rounded ${
+              activeId === w.id && !w.minimized ? 'bg-foreground/20' : 'bg-foreground/10'
+            } hover:bg-foreground/20 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]`}
+            onClick={() => (w.minimized ? restoreWindow(w.id) : focusWindow(w.id))}
+            onDoubleClick={() => (w.minimized ? restoreWindow(w.id) : minimizeWindow(w.id))}
+            aria-pressed={activeId === w.id && !w.minimized}
+            aria-label={`${w.title} ${w.minimized ? 'minimized' : 'open'}`}
+            title={w.title}
+          >
+            <span className="text-xs">{w.title}</span>
+          </button>
         ))}
+        {minimized.length > 0 ? (
+          <span className="text-xs opacity-70 self-center">Minimized: {minimized.length}</span>
+        ) : null}
       </div>
     </div>
   );

@@ -3,10 +3,15 @@
 
 :root {
   /* base tokens */
-  --surface: 250 250 250; /* rgb triplet */
-  --surface-2: 240 240 240;
-  --text: 20 20 23;
+  --background: 250 250 250; /* page background */
+  --surface: 250 250 250; /* panel bg */
+  --surface-2: 240 240 240; /* elevated panel bg */
+  --text: 20 20 23; /* primary text */
+  --text-muted: 90 90 100; /* secondary text */
   --accent: 0 122 255;
+  --success: 16 185 129;
+  --warning: 234 179 8;
+  --error: 239 68 68;
 
   --radius: 12px;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -41,14 +46,18 @@ body[data-era="now-os"] {
 /* convenience utilities (optional) */
 html, body, #root { height: 100%; }
 body {
-  background-color: rgb(var(--surface));
+  background-color: rgb(var(--background));
   color: rgb(var(--text));
 }
 
 .bg-surface { background-color: rgb(var(--surface)); }
 .bg-surface-2 { background-color: rgb(var(--surface-2)); }
 .text-token { color: rgb(var(--text)); }
+.text-muted-token { color: rgb(var(--text-muted)); }
 .accent-token { color: rgb(var(--accent)); }
+.success-token { color: rgb(var(--success)); }
+.warning-token { color: rgb(var(--warning)); }
+.error-token { color: rgb(var(--error)); }
 .rounded-token { border-radius: var(--radius); }
 .shadow-token { box-shadow: var(--shadow); }
 

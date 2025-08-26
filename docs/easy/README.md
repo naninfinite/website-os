@@ -22,6 +22,14 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 ## What works now (Sprint 1)
 - The site knows which era is active based on a public schedule file.
 - A small timer badge counts down to the next era flip.
-- On desktop, you can open simple app windows from a toolbar.
+- On desktop, you can open app windows, drag them, use arrow keys to nudge, minimize to the taskbar, and restore them. The active window comes to the front.
 - On mobile, the home screen shows a list (Terminal-OS) or grid (OS-91/Now-OS) of apps. Tapping opens the app full-screen.
  - New: Desktop vs Mobile render differently via a layout profile. Desktop shows a big placeholder shell; Mobile shows a simple list or grid based on the active era.
+
+## New in Chunk 2
+## New in Chunk 3
+- Desktop has a basic Window Manager: open/move/minimize/restore and a simple taskbar.
+- Keyboard: use Arrow keys when the window title is focused to nudge the window; Escape to minimize.
+- There’s now a visible countdown (days:hours:minutes:seconds).
+- When the timer hits zero, a short “Rebooting…” overlay appears and then the OS switches to the next era.
+- Colors and fonts change automatically because themes are controlled by CSS variables for each era.

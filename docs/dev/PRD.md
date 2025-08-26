@@ -96,3 +96,16 @@ docs/{dev,easy,decisions,log}
 - WindowManager MVP (desktop) + AppContainerPage (mobile).
 - AppRegistry opens stubs for all apps.
 - Docs updated: README, CHANGELOG, dev/easy docs, daily log, BUGS.md if relevant.
+
+### Sprint 1 — Chunk 3: Window Manager MVP
+Requirements
+- Desktop can open, move, minimize, and restore windows.
+- Focus management and z-order: last interacted window is on top.
+- Simple taskbar shows running apps; click to focus/restore, double-click to minimize.
+- Keyboard accessibility: focus ring, Arrow keys nudge when title is focused; Escape minimizes.
+- Respect `prefers-reduced-motion` for any animations (none added yet).
+
+Implementation Notes
+- Deterministic TS state in `src/shell/windowing/WindowManager.tsx`. No DOM mutations outside React.
+- Drag is implemented via mouse listeners; resizing is deferred.
+- Mobile remains full-page per era layout profile; no windowing there.

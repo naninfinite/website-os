@@ -1,0 +1,7 @@
+{
+    "version": 1,
+    "messages": [
+        { "key": "boot.motd", "text": "Welcome to website-OS :: type HELP" },
+        { "key": "dimension.tip", "text": "Try /wallpaper in OS-91 and Now-OS"}
+    ]
+}

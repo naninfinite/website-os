@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "projects": [
+        {
+            "id": "p-terminal-os",
+            "title": "terminal-os",
+            "summary": "Retro CRT shell and era countdown concept.",
+            "tags": ["web", "ui", "retro"],
+            "links": { "live": "", "repo": ""},
+            "media": ["img-terminal-shot-1"],
+            "eraAvailability": ["terminal-os", "os-91", "now-os"]
+        }
+    ]
+}

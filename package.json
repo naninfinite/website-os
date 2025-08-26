@@ -5,12 +5,26 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "vitest"
+    "preview": "vite preview --port 5173",
+    "test": "vitest",
+    "log:today": "node tools/updateDailyLog.mjs"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "vitest": "^1.0.0",
+    "@vitejs/plugin-react": "^4.3.1",
     "@testing-library/react": "^14.0.0",
-    "@testing-library/user-event": "^14.0.0"
+    "@testing-library/user-event": "^14.0.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.1",
+    "vitest": "^1.0.0"
   }
 }
 

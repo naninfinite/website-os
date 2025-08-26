@@ -45,6 +45,12 @@ Every change must update:
 
 Note: Create a `.env` or `.env.local` in the project root and set `VITE_ERA_SCHEDULE_URL` (e.g., `/era-schedule.json`) before running the app in production.
 
+### Sprint 1 Status
+- Era layout profiles implemented (`src/shell/layoutProfiles.ts`)
+- Countdown reads schedule from `VITE_ERA_SCHEDULE_URL` and exposes `onEraFlip` via `useCountdown`
+- Desktop WindowManager (MVP) and Mobile AppContainerPage wired
+- AppRegistry opens stubs for all apps; Mobile Home switches list/grid per era
+
 ## Testing
 
 Run the test suite with:

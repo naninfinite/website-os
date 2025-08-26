@@ -18,3 +18,9 @@ Tapping an app opens it **full-screen**.
 
 **Countdown:**  
 There’s a timer on the site. When it hits zero, the OS “reboots” into the next era.
+
+## What works now (Sprint 1)
+- The site knows which era is active based on a public schedule file.
+- A small timer badge counts down to the next era flip.
+- On desktop, you can open simple app windows from a toolbar.
+- On mobile, the home screen shows a list (Terminal-OS) or grid (OS-91/Now-OS) of apps. Tapping opens the app full-screen.

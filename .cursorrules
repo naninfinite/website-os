@@ -1,0 +1,56 @@
+# .cursorrules — website-os
+
+You are an expert pair-programmer for the repo `website-os`. Follow these rules:
+
+- Respect the PRD at `docs/dev/PRD.md`.
+  Eras: Terminal-OS (CRT), OS-91 (Krazam-style), Now-OS (Prozilla/OS.js/Dustin Brett).
+  Same content/apps across eras; only shell/behavior changes via era layout profiles.
+
+- Never edit `content/*` schemas. All styles use CSS variables/Tailwind tokens (no raw hex).
+
+- Layout profiles:
+  - Terminal-OS mobile: home=list, apps open full-page.
+  - OS-91 & Now-OS mobile: home=grid, apps open full-page; Now-OS adds dock+search.
+
+- Folders:
+  apps/{about,projects,gallery,settings,connect,arcade,dimension}
+  arcade/{core,games/{pong,snake,tron},renderers/{terminal,os91,now},net/{local,colyseus}}
+  shell/{windowing,taskbar,launcher,app-registry,chrome}
+  themes/{terminal-os,os-91,now-os}
+  services/{auth,realtime,db}
+  content/{projects.json,media.json,lore.json}
+  docs/{dev,easy,decisions,log}
+
+- Games: deterministic TS logic (no DOM in logic). Renderers own DOM. Colyseus authoritative @30Hz; net/local fallback.
+- Dimension: token-driven visuals; wallpaper mode (OS-91/Now) throttled; Now-OS can be full-bleed and show avatars via Connect.
+- Accessibility: keyboardable, visible focus, respects `prefers-reduced-motion`.
+
+- Docs mandatory with every change:
+  - README.md, CHANGELOG.md
+  - docs/dev/* (architecture, ADRs in docs/decisions/ADR-xxx.md)
+  - docs/easy/* (plain-English)
+  - docs/log/YYYY-MM-DD.md (build log)
+
+Model usage:
+- GPT-5 for APIs/netcode/refactors/tests.
+- GPT-5 mini for UI scaffolding, Tailwind, boilerplate, docs.
+
+- Comments:
+  - Every new/edited source file must start with a short `SUMMARY` header (purpose, key props, gotchas).
+  - Add concise inline comments for non-obvious logic and state transitions.
+
+- Bugs tracking (mandatory):
+  - Maintain `BUGS.md` at repo root.
+  - For every bug found/fixed, add an entry with: ID, Title, Status (open/fixed), Date found, Area, Steps to Reproduce, Expected, Actual, Fix (commit hash), Tests added.
+  - Reference the BUG ID in commit messages, e.g. `fix(BUG-012): window focus lost on resize`.
+
+- PR/Commit hygiene:
+  - Each change must update: README, CHANGELOG, docs/dev, docs/easy, docs/log/YYYY-MM-DD.md, and BUGS.md if relevant.
+
+  - Daily Logs:
+  - Every time code is added/changed, update or create a daily log file in `docs/log/YYYY-MM-DD.md`.
+  - Each log entry should include:
+    - Summary of changes
+    - Files touched
+    - Commit hash (when available)
+    - Notes on docs/BUGS updates

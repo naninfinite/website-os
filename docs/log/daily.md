@@ -26,3 +26,8 @@
 ### Notes
 - Framer Motion can be extended later for smoother physics-based dismissal  
 - Current implementation keeps parity with Safari-like tab swipe UX  
+ 
+## 2025-08-27 (evening)
+- Chunk 6: Added Recents + File Browser (localStorage-backed recents; stub FS). Try: open apps/files, then open Recents.EXE to see history.
+- Chunk 7: Added Settings.EXE (theme, wallpaper, accessibility prefs). Preferences persist and apply to body classes; wallpaper options available.
+- Fixed CSS token split: `tokens.css` + `eraThemes.css`; ensure `@import` ordering in `src/styles/index.css` if you move imports.

@@ -47,3 +47,6 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - The site includes minimal **Recents.EXE** and **File Browser.EXE** apps in `src/apps/recents` and `src/apps/filebrowser`.
 - **Recents.EXE**: shows apps/files you've opened recently (stored in localStorage).
 - **File Browser.EXE**: browse the stub virtual file system (stubbed data in `src/services/fileSystem.ts`).
+
+## Settings & Themes
+- **Settings.EXE** lets you preview eras (dev override), pick theme and wallpaper, and toggle accessibility prefs (reduced motion/high contrast). Preferences persist locally.

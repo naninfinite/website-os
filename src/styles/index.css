@@ -4,6 +4,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('../themes/tokens.css');
+@import url('../themes/eraThemes.css');
 
 :root {
   /* Base design tokens (use RGB triplets where components expect rgb(var(--xxx))) */
@@ -77,8 +79,15 @@
   --accent: 110 168 254;
 }
 
+.settings-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.high-contrast { --text: 255 255 255; }
+.reduced-motion * { transition: none !important; animation: none !important; }
+.wallpaper-crt { --wallpaper: radial-gradient(100% 100% at 50% 50%, rgba(0,0,0,0.3), transparent), repeating-linear-gradient(0deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px); }
+.wallpaper-os91 { --wallpaper: linear-gradient(180deg, rgba(0,0,0,0.05), transparent), linear-gradient(135deg, rgba(0,0,0,0.06), transparent); }
+.wallpaper-now { --wallpaper: conic-gradient(from 180deg at 50% 50%, rgba(0,0,0,0.08), transparent); }
+
 html, body, #root { height: 100%; }
-body { background-color: rgb(var(--background)); color: rgb(var(--text)); }
+body { background: var(--wallpaper, rgb(var(--background))); color: rgb(var(--text)); }
 
 /* Utilities for stubs/components */
 .surface { background-color: rgb(var(--surface)); }

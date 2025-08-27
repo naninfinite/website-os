@@ -1,3 +1,20 @@
+/* SUMMARY: Era-agnostic design tokens. Components must use these CSS variables. */
+
+:root {
+  --background: 250 250 250;
+  --surface: 250 250 250;
+  --surface-2: 240 240 240;
+  --text: 20 20 23;
+  --text-muted: 90 90 100;
+  --accent: 0 122 255;
+
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  --duration-fast: 120ms;
+  --duration-slow: 320ms;
+}
+
+html, body, #root { height: 100%; }
 /* SUMMARY: Era-agnostic design tokens. Components must use these CSS variables.
    Per-era overrides are applied via body[data-era]. */
 

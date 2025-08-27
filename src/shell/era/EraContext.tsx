@@ -18,6 +18,20 @@ export type EraContextValue = {
   flipping: boolean;
   refreshSchedule: () => Promise<void>;
   setEraForDev?: (id: EraId) => void;
+  userPrefs: {
+    theme: 'light' | 'dark' | 'auto';
+    reducedMotion: boolean;
+    highContrast: boolean;
+    gestureDismiss: boolean;
+    wallpaper: string | null;
+  };
+  updatePrefs: (partial: Partial<{
+    theme: 'light' | 'dark' | 'auto';
+    reducedMotion: boolean;
+    highContrast: boolean;
+    gestureDismiss: boolean;
+    wallpaper: string | null;
+  }>) => void;
 };
 
 const EraContext = createContext<EraContextValue | null>(null);
@@ -40,6 +54,28 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
   const [flipping, setFlipping] = useState<boolean>(false);
   const tickRef = useRef<number | null>(null);
   const pollRef = useRef<number | null>(null);
+  const [userPrefs, setUserPrefs] = useState<{
+    theme: 'light' | 'dark' | 'auto';
+    reducedMotion: boolean;
+    highContrast: boolean;
+    gestureDismiss: boolean;
+    wallpaper: string | null;
+  }>(() => {
+    try {
+      const raw = localStorage.getItem('websiteos:prefs');
+      if (!raw) return { theme: 'auto', reducedMotion: false, highContrast: false, gestureDismiss: true, wallpaper: null };
+      const parsed = JSON.parse(raw) as any;
+      return {
+        theme: parsed?.theme === 'light' || parsed?.theme === 'dark' ? parsed.theme : 'auto',
+        reducedMotion: Boolean(parsed?.reducedMotion),
+        highContrast: Boolean(parsed?.highContrast),
+        gestureDismiss: parsed?.gestureDismiss !== false,
+        wallpaper: typeof parsed?.wallpaper === 'string' ? parsed.wallpaper : null,
+      };
+    } catch {
+      return { theme: 'auto', reducedMotion: false, highContrast: false, gestureDismiss: true, wallpaper: null };
+    }
+  });
 
   const compute = () => {
     if (schedule.length === 0) {
@@ -122,14 +158,40 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
     document.body.dataset.era = eraId;
   }, [eraId]);
 
+  // Apply user preferences to body
+  useEffect(() => {
+    // theme override
+    if (userPrefs.theme === 'auto') {
+      delete document.body.dataset.theme;
+    } else {
+      document.body.dataset.theme = userPrefs.theme;
+    }
+    // motion
+    document.body.classList.toggle('reduced-motion', !!userPrefs.reducedMotion);
+    // contrast
+    document.body.classList.toggle('high-contrast', !!userPrefs.highContrast);
+    // wallpaper classes
+    document.body.classList.remove('wallpaper-crt', 'wallpaper-os91', 'wallpaper-now');
+    if (userPrefs.wallpaper) document.body.classList.add(`wallpaper-${userPrefs.wallpaper}`);
+    try {
+      localStorage.setItem('websiteos:prefs', JSON.stringify(userPrefs));
+    } catch {
+      // ignore
+    }
+  }, [userPrefs]);
+
+  const updatePrefs: EraContextValue['updatePrefs'] = (partial) => {
+    setUserPrefs((prev) => ({ ...prev, ...partial }));
+  };
+
   const setEraForDev = (id: EraId) => {
     if (!isForced) return;
     setEraId(id);
   };
 
   const value = useMemo<EraContextValue>(
-    () => ({ eraId, schedule, nextFlipMs, nextEraId, isForced, flipping, refreshSchedule, setEraForDev }),
-    [eraId, schedule, nextFlipMs, nextEraId, isForced, flipping]
+    () => ({ eraId, schedule, nextFlipMs, nextEraId, isForced, flipping, refreshSchedule, setEraForDev, userPrefs, updatePrefs }),
+    [eraId, schedule, nextFlipMs, nextEraId, isForced, flipping, userPrefs]
   );
 
   return <EraContext.Provider value={value}>{props.children}</EraContext.Provider>;

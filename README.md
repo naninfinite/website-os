@@ -92,6 +92,10 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - **File Browser.EXE** (`src/apps/filebrowser`): minimal file browser with breadcrumbs and deep-link support. Uses `src/services/fileSystem.ts` as a stubbed virtual FS.
 - Both apps are registered in the app registry (`src/shell/appRegistry.ts`) and can be opened from the launcher or taskbar.
 
+## Settings & Themes
+- **Settings.EXE** (`src/apps/settings`): preview and control era (dev override), choose theme (light/dark/auto), pick wallpapers, and toggle accessibility options (reduced motion, high contrast). Preferences persist to localStorage and apply via body classes (`.reduced-motion`, `.high-contrast`, `wallpaper-*`).
+- Theme tokens are split into `src/themes/tokens.css` (base tokens) and `src/themes/eraThemes.css` (era overrides). The active era class (`theme-terminal|theme-os91|theme-now`) is applied to `<body>` by `EraProvider`.
+
 ### Dev override (local)
 Create `.env.local` at project root:
 

@@ -1,3 +1,28 @@
+/* SUMMARY: Era-specific overrides keyed by body theme class. */
+
+.theme-terminal {
+  --background: 11 14 16;
+  --surface: 11 14 16;
+  --surface-2: 26 31 36;
+  --text: 168 255 96;
+  --accent: 94 255 0;
+}
+
+.theme-os91 {
+  --background: 195 199 203;
+  --surface: 195 199 203;
+  --surface-2: 229 233 242;
+  --text: 0 0 0;
+  --accent: 42 75 141;
+}
+
+.theme-now {
+  --background: 11 13 16;
+  --surface: 11 13 16;
+  --surface-2: 18 22 28;
+  --text: 231 234 240;
+  --accent: 110 168 254;
+}
 /* SUMMARY: Era-specific fine-tuning for fonts, effects, and panel vibes. */
 
 /* Terminal-OS: CRT vibe, monospace, green-on-black */

@@ -7,7 +7,7 @@
         {
           "id": "img-terminal-shot-1",
           "type": "image",
-          "src": "public/media/img-terminal-shot-1.png",
+          "src": "media/img-terminal-shot-1.png",
           "alt": "Terminal-OS desktop screenshot",
           "credit": "© NaNinfinite"
         }

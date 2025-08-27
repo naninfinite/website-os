@@ -37,6 +37,7 @@ export default function ProjectsApp() {
         <label>
           <span className="sr-only">Filter projects by tag or title</span>
           <input
+            aria-label="Filter projects"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
             placeholder="Filter by tag or title"
@@ -48,9 +49,9 @@ export default function ProjectsApp() {
       {loading ? (
         <p className="mt-4">Loading…</p>
       ) : projects && projects.length ? (
-        <ul className="mt-4 space-y-3">
+        <ul role="list" className="mt-4 space-y-3">
           {visible.map((p) => (
-            <li key={p.id} className="p-3 border rounded">
+            <li role="listitem" key={p.id} className="p-3 border rounded">
               <div className="flex items-center justify-between">
                 <div>
                   <div className="font-medium">{p.title} {p.year ? <span className="text-sm opacity-70">({p.year})</span> : null}</div>

@@ -39,6 +39,11 @@ Tip: Keyboard controls — focus the desktop and use Arrow keys to move selectio
 - The frontend loads these via `src/services/content/loaders.ts` and relies on the shapes in `src/services/content/types.ts`. When adding content, keep ids kebab-cased and include the required fields (`id`, `title`, `src/summary` etc.).
 - Changing these files in dev requires a hard reload to pick up new JSON (module-level cache is used in the loaders).
 
+## Testing
+
+- Run the test suite with `npm run test` (or `pnpm test`) from the project root.
+- Tests cover small pure units such as content loaders and can be run headlessly in CI.
+
 ## New in Chunk 2
 ## New in Chunk 3
 - Desktop has a basic Window Manager: open/move/minimize/restore and a simple taskbar.

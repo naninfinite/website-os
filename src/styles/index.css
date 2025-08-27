@@ -214,3 +214,14 @@ body { background: var(--wallpaper, rgb(var(--background))); color: rgb(var(--te
   .desktop-icon, .desktop-icon:focus { transform: none !important; }
 }
 
+/* Accessibility utilities */
+.sr-only {
+  position: absolute !important;
+  height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* Focus-visible ring using CSS variables (no raw hex) */
+:where(:focus):where(:not(:focus-visible)) { outline: none; }
+:where(:focus-visible) { outline: 3px solid rgba(var(--accent), 0.22); outline-offset: 2px; }
+

@@ -28,12 +28,12 @@ export default function GalleryApp() {
       {loading ? (
         <p className="mt-2">Loading…</p>
       ) : items && items.length ? (
-        <div role="list" className="mt-3 grid grid-cols-3 gap-3">
+        <div role="list" aria-label="Gallery" className="mt-3 grid grid-cols-3 gap-3">
           {items.map((it) => (
             <div key={it.id} role="listitem" className="card p-2 border rounded">
               {it.kind === 'image' ? (
                 // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                <img src={`${import.meta.env.BASE_URL}${it.src}`} alt={it.alt} className="w-full h-40 object-cover rounded" />
+                <img src={`${import.meta.env.BASE_URL}${it.src}`} alt={it.alt || it.title} className="w-full h-40 object-cover rounded" />
               ) : (
                 <div className="text-sm">Video: {it.title}</div>
               )}

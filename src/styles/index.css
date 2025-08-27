@@ -1,11 +1,11 @@
 /* SUMMARY: Global styles entry. Tailwind base/components/utilities + default
    design tokens using CSS variables. Themes override these variables. */
+@import url('../themes/tokens.css');
+@import url('../themes/eraThemes.css');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import url('../themes/tokens.css');
-@import url('../themes/eraThemes.css');
 
 :root {
   /* Base design tokens (use RGB triplets where components expect rgb(var(--xxx))) */

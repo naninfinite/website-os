@@ -54,16 +54,32 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - Mobile: apps open full-page via `src/shell/mobile/AppContainerPage.tsx`; Home renders list/grid per era in `src/shell/mobile/Home.tsx`.
 - AppRegistry opens stubs for all apps; Mobile Home switches list/grid per era
 
-## Countdown, Schedule, and Reboot
-- The app loads an era schedule from `VITE_ERA_SCHEDULE_URL` (see `public/era-schedule.json`).
-- A visible countdown shows time remaining in the current era (dd:hh:mm:ss).
-- When it reaches zero, a Reboot overlay appears for ~3 seconds, then the era flips and theme tokens update via `body[data-era]`.
-- Components consume tokens from CSS variables (see `src/themes/tokens.css` and `src/themes/eraThemes.css`).
+## Era Schedule, Countdown & Reboot
 
-## Era binding
-- Era is provided via `EraProvider` (`src/shell/era/EraContext.tsx`), which loads the schedule (or uses `VITE_FORCE_ERA`).
-- On change, it applies `body[data-era]` and toggles a theme class: `theme-terminal` | `theme-os91` | `theme-now`.
-- In dev, a small badge shows the current era (see `src/shell/DevEraBadge.tsx`).
+- The app loads an era schedule from `VITE_ERA_SCHEDULE_URL` (falls back to `public/era-schedule.json`).
+- `EraProvider` (`src/shell/era/EraContext.tsx`) exposes:
+  - `eraId` (`terminal-os` | `os-91` | `now-os`)
+  - `schedule`, `nextFlipMs`
+  - dev override awareness (`VITE_FORCE_ERA`)
+- A persistent **Countdown Badge** (`src/components/CountdownBadge.tsx`) shows the next era and remaining time (dd:hh:mm:ss). Click to refresh the schedule.
+- When the countdown hits zero (and **no** `VITE_FORCE_ERA`), a brief **Reboot Overlay** plays and the UI flips era **without reload**.
+- The `<body>` element gets a theme class:
+  - `theme-terminal` | `theme-os91` | `theme-now`
+- Components consume colors/spacing via CSS variables (see `src/styles/index.css`). No raw hex in components.
+- Accessibility: respects `prefers-reduced-motion` (overlay animates instantly).
+
+### Dev override (local)
+Create `.env.local` at project root:
+
+### Dev override (local)
+Create `.env.local` at project root: VITE_FORCE_ERA=now-os
+- Locks the UI to the specified era.
+- Countdown badge shows **“Dev: now-os (override)”**.
+- Reboot overlay is **suppressed** while forced.
+
+### Era binding
+- `EraProvider` applies the current era’s theme class on `<body>`.
+- A small **DevEraBadge** (`src/shell/DevEraBadge.tsx`) shows the active era in dev mode.
 
 ## Testing
 

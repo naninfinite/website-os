@@ -4,7 +4,7 @@
  * shows a countdown + reboot overlay.
  */
 import React, { useMemo, useState } from 'react';
-import { Countdown } from './shell/Countdown';
+import { CountdownBadge } from './components/CountdownBadge';
 import { Desktop } from './shell/Desktop';
 import { useIsMobile } from './shell/useIsMobile';
 import { layoutProfiles, type Era as EraId } from './themes/layoutProfiles';
@@ -25,15 +25,6 @@ function AppInner(): JSX.Element {
     <div>
       <div style={{ padding: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ opacity: 0.8 }}>Era: {eraId}</div>
-        <Countdown
-          currentEra={eraId as unknown as any}
-          onEraFlip={() => {
-            setRebooting(true);
-            window.setTimeout(() => {
-              setRebooting(false);
-            }, 3000);
-          }}
-        />
       </div>
       {isMobile ? (
         mobileApp ? (
@@ -44,6 +35,8 @@ function AppInner(): JSX.Element {
       ) : (
         <Desktop era={eraId as EraId} />
       )}
+      {/* Global UI */}
+      <CountdownBadge />
       {rebooting ? <RebootOverlay /> : null}
       <DevEraBadge />
     </div>

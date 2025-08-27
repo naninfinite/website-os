@@ -19,6 +19,9 @@
 - Updated `WindowManager` to handle shared dismissal flow across mobile + desktop  
 - Adjusted `Launcher` and `LayoutProfiles` for new opacity variable  
 - Updated global styles (`index.css`) for opacity transition  
+- Started dev server to verify Framer Motion integration:
+  - `VITE v5.4.19  ready in 298 ms`
+  - Local: `http://localhost:5173/`
 
 ### Notes
 - Framer Motion can be extended later for smoother physics-based dismissal  

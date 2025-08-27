@@ -38,3 +38,7 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - The site picks an “era” from a schedule file.
 - Developers can force an era locally using a `.env.local` setting: `VITE_FORCE_ERA=terminal-os` (or `os-91`, `now-os`).
 - You’ll see a tiny badge in the corner in dev showing the current era.
+
+## Dev override & countdown
+- Want to preview a specific era? Create `.env.local` at the project root with `VITE_FORCE_ERA=now-os` to lock the UI to Now-OS during development.
+- The site shows a persistent countdown badge that reads the schedule and displays time remaining to the next era. Click the badge to refresh the schedule from the server.

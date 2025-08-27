@@ -5,31 +5,28 @@ All notable changes to this project will be documented here, following [Keep a C
 ### Added
 - Refactored `appMeta` exports into dedicated `meta.ts` files per app  
 - Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings  
-- **Swipe-to-dismiss gesture** for windows on mobile (`AppContainerPage`, `Home`)  
-- **Unified dismissal logic** in `WindowManager` (mobile + desktop parity)  
-- **Scrim opacity feedback** tied to drag progress (CSS variable + styles)  
-- **Launcher/LayoutProfiles updates** to support scrim opacity transitions  
 
 ---
 
-## [2025-08-27] Scaffold 4 Complete
+## [2025-08-27] Sprint 1 Complete
 ### Added
-- Registered all core apps in `appRegistry`:
-  - About, Projects, Gallery, Settings
-  - Connect, Arcade, Dimension, Terminal
-- Implemented `VITE_FORCE_ERA` override for development testing  
-- Verified era switching logic now surfaces in UI  
-- Scaffold Chunk 1: layoutProfiles + shell baseline  
-- Scaffold Chunk 2: themes + reboot/countdown logic (tokens expanded, eraThemes, RebootOverlay, real Countdown)  
-- Scaffold Chunk 3: WindowManager MVP (open/move/minimize/restore, focus/z-order, taskbar)  
-- Added app stubs and registry wiring for Sprint 1  
-- Bind active era to body theme/layout via EraProvider; added dev-era badge  
+- **Era layout profiles** (`src/themes/layoutProfiles.ts`) for Terminal-OS, OS-91, Now-OS  
+- **Desktop windowing MVP** (`src/shell/windowing/WindowManager.tsx`): open, drag, minimize/restore, focus/z-order, taskbar  
+- **Mobile container** (`src/shell/mobile/AppContainerPage.tsx`): full-page apps, Home list/grid per era  
+- **Swipe-to-dismiss gesture** on Now-OS mobile with scrim opacity feedback (Framer Motion)  
+- **App registry stubs** (About, Projects, Gallery, Settings, Connect, Arcade, Dimension, Terminal)  
+- **EraProvider** (`src/shell/era/EraContext.tsx`): schedule polling, countdown tick, body theme class, `VITE_FORCE_ERA` override  
+- **CountdownBadge** (`src/components/CountdownBadge.tsx`): shows next era, refreshable  
+- **RebootOverlay** (`src/shell/RebootOverlay.tsx`): brief fade/message on era flip, reduced-motion friendly  
 - Initial Vite + React + TS scaffold (index.html, vite, tsconfig, Tailwind)  
-- Added schedule loader + countdown hook + CountdownBadge component  
-- Added layoutProfiles contract and era mappings (Terminal-OS, OS-91, Now-OS)  
-- Basic test for schedule logic (getActiveEra)  
-- Repo hygiene files added (editorconfig, prettierrc, nvmrc, LICENSE, CONTRIBUTING, env.example, gitignore updates)  
-- Added PR template + CI  
+- Repo hygiene files: editorconfig, prettierrc, nvmrc, LICENSE, CONTRIBUTING, env.example, gitignore updates  
+- PR template + CI  
 
 ### Fixed
 - Completed `appRegistry` scaffold (missing app stubs, unfinished export)  
+- Typo in app registry exports causing HMR warnings  
+
+### Changed
+- Updated global styles (`src/styles/index.css`) with scrim, badge, and overlay tokens  
+- Bound active era to body theme class (`theme-terminal`, `theme-os91`, `theme-now`)  
+- README, easy docs, and daily logs updated with era schedule + override instructions  

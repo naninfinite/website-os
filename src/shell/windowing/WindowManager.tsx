@@ -1,15 +1,15 @@
 /**
  * SUMMARY
  * WindowManager MVP for desktop: open, move (drag + arrows), minimize/restore,
- * focus/z-order, and a simple taskbar. Resizing is deferred.
+ * focus/z-order. Provides context so Taskbar/Launcher can control it. Resizing
+ * is deferred.
  */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AppStub, getAppMeta } from '../app-registry';
-import type { AppId } from '../app-registry/types';
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { getAppMeta, appRegistry } from '../appRegistry';
 
 export type WindowSpec = {
   id: string;
-  appId: AppId;
+  appId: string;
   title: string;
   x: number;
   y: number;
@@ -27,20 +27,31 @@ type DragState = {
 
 const DESKTOP_PADDING = 8;
 
-export function WindowManager(): JSX.Element {
+export type WindowingApi = {
+  windows: WindowSpec[];
+  activeId: string | null;
+  openApp: (id: string) => void;
+  closeWindow: (id: string) => void;
+  minimizeWindow: (id: string) => void;
+  restoreWindow: (id: string) => void;
+  focusWindow: (id: string) => void;
+};
+
+const WindowingContext = createContext<WindowingApi | null>(null);
+export function useWindowing(): WindowingApi {
+  const ctx = useContext(WindowingContext);
+  if (!ctx) throw new Error('useWindowing must be used within WindowManager');
+  return ctx;
+}
+
+export function WindowManager(props: { children?: React.ReactNode }): JSX.Element {
   const [windows, setWindows] = useState<WindowSpec[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [zCounter, setZCounter] = useState<number>(1);
   const dragRef = useRef<DragState>(null);
 
-  // Stable app list to open
-  const apps: AppId[] = useMemo(
-    () => ['about', 'projects', 'gallery', 'settings', 'connect', 'arcade', 'dimension'],
-    []
-  );
-
-  const openApp = (id: AppId) => {
-    const meta = getAppMeta(id);
+  const openApp = (id: string) => {
+    const meta = getAppMeta(id) ?? { id, title: id, icon: undefined };
     // Cascade new windows slightly
     const openCount = windows.length;
     const x = DESKTOP_PADDING + (openCount * 24) % 200;
@@ -150,24 +161,14 @@ export function WindowManager(): JSX.Element {
   };
 
   const running = windows;
-  const minimized = windows.filter((w) => w.minimized);
 
   return (
     <div className="h-full w-full relative select-none" aria-label="Desktop">
-      {/* Launcher */}
-      <div className="p-2 flex flex-wrap gap-2">
-        {apps.map((app) => (
-          <button
-            key={app}
-            className="px-3 py-1 rounded bg-foreground/10 hover:bg-foreground/20 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
-            onClick={() => openApp(app)}
-            aria-label={`Open ${app}`}
-          >
-            {app}
-          </button>
-        ))}
-      </div>
-
+      <WindowingContext.Provider
+        value={{ windows, activeId, openApp, closeWindow, minimizeWindow, restoreWindow, focusWindow }}
+      >
+        {props.children}
+      </WindowingContext.Provider>
       {/* Windows layer */}
       <div className="absolute inset-0 pointer-events-none" aria-live="polite">
         {running
@@ -209,31 +210,13 @@ export function WindowManager(): JSX.Element {
                   </button>
                 </div>
               </div>
-              <AppStub id={win.appId} />
+              {(() => {
+                const reg = appRegistry[win.appId];
+                const Comp = reg?.component;
+                return Comp ? <Comp /> : <div className="p-4 text-sm">Unknown app: {win.appId}</div>;
+              })()}
             </div>
           ))}
-      </div>
-
-      {/* Taskbar */}
-      <div className="absolute bottom-0 left-0 right-0 p-2 flex gap-2 bg-foreground/5 border-t border-foreground/10 pointer-events-auto">
-        {running.map((w) => (
-          <button
-            key={w.id}
-            className={`px-3 py-1 rounded ${
-              activeId === w.id && !w.minimized ? 'bg-foreground/20' : 'bg-foreground/10'
-            } hover:bg-foreground/20 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]`}
-            onClick={() => (w.minimized ? restoreWindow(w.id) : focusWindow(w.id))}
-            onDoubleClick={() => (w.minimized ? restoreWindow(w.id) : minimizeWindow(w.id))}
-            aria-pressed={activeId === w.id && !w.minimized}
-            aria-label={`${w.title} ${w.minimized ? 'minimized' : 'open'}`}
-            title={w.title}
-          >
-            <span className="text-xs">{w.title}</span>
-          </button>
-        ))}
-        {minimized.length > 0 ? (
-          <span className="text-xs opacity-70 self-center">Minimized: {minimized.length}</span>
-        ) : null}
       </div>
     </div>
   );

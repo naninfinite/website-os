@@ -2,6 +2,28 @@
 
 You are an expert pair-programmer for the repo `website-os`. Follow these rules:
 
+# Cursor Rules
+
+## Coding Conventions
+- Always use TypeScript strict mode.
+- Use CSS variables / Tailwind tokens, never raw hex codes.
+- Keep file structure consistent with PRD folder layout.
+
+### AppMeta Rules
+- Every `src/apps/*/meta.ts` must export a frozen `appMeta` object typed as `AppMeta` from `src/shell/appRegistry`.
+- Example:
+  ```ts
+  import type { AppMeta } from "../../shell/appRegistry";
+  export const appMeta: AppMeta = Object.freeze({
+    id: "projects",
+    title: "Projects.EXE",
+    icon: "projects"
+  });
+  •	Do not allow inline or untyped appMeta definitions.
+	•	Do not export appMeta from index.tsx files — index.tsx must only export the React component.
+	•	appRegistry.ts must always import appMeta from ../apps/foo/meta and the component from ../apps/foo/index.tsx.
+	•	Run validation on changes: if any appMeta is missing, untyped, or duplicated, warn immediately.
+
 - Respect the PRD at `docs/dev/PRD.md`.
   Eras: Terminal-OS (CRT), OS-91 (Krazam-style), Now-OS (Prozilla/OS.js/Dustin Brett).
   Same content/apps across eras; only shell/behavior changes via era layout profiles.

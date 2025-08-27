@@ -1,40 +1,35 @@
 /**
  * SUMMARY
- * Root App for Sprint 1. Tracks active era, applies body[data-era], and renders
- * Desktop (WindowManager MVP) vs Mobile full-page app container.
+ * Root App for Sprint 1. Provides EraProvider, renders Desktop vs Mobile, and
+ * shows a countdown + reboot overlay.
  */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Countdown } from './shell/Countdown';
 import { Desktop } from './shell/Desktop';
 import { useIsMobile } from './shell/useIsMobile';
-import { layoutProfiles, getActiveEra, type Era } from './themes/layoutProfiles';
+import { layoutProfiles, type Era as EraId } from './themes/layoutProfiles';
 import { RebootOverlay } from './shell/RebootOverlay';
 import { MobileHome } from './shell/mobile/Home';
 import { AppContainerPage } from './shell/mobile/AppContainerPage';
-import type { AppId } from './shell/app-registry/types';
+import { EraProvider, useEra } from './shell/era/EraContext';
+import { DevEraBadge } from './shell/DevEraBadge';
 
-export function App(): JSX.Element {
-  const [era, setEra] = useState<Era>(() => getActiveEra());
+function AppInner(): JSX.Element {
+  const { eraId } = useEra();
   const [rebooting, setRebooting] = useState<boolean>(false);
-  const [mobileApp, setMobileApp] = useState<AppId | null>(null);
+  const [mobileApp, setMobileApp] = useState<string | null>(null);
   const isMobile = useIsMobile();
-  const profile = useMemo(() => layoutProfiles[era], [era]);
-
-  useEffect(() => {
-    document.body.dataset.era = era;
-    return () => { delete document.body.dataset.era; };
-  }, [era]);
+  const profile = useMemo(() => layoutProfiles[eraId as EraId], [eraId]);
 
   return (
     <div>
       <div style={{ padding: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ opacity: 0.8 }}>Era: {era}</div>
+        <div style={{ opacity: 0.8 }}>Era: {eraId}</div>
         <Countdown
-          currentEra={era}
-          onEraFlip={(next) => {
+          currentEra={eraId as unknown as any}
+          onEraFlip={() => {
             setRebooting(true);
             window.setTimeout(() => {
-              setEra(next);
               setRebooting(false);
             }, 3000);
           }}
@@ -47,10 +42,19 @@ export function App(): JSX.Element {
           <MobileHome mode={profile.mobile.homeMode} onOpen={(id) => setMobileApp(id)} />
         )
       ) : (
-        <Desktop era={era} />
+        <Desktop era={eraId as EraId} />
       )}
       {rebooting ? <RebootOverlay /> : null}
+      <DevEraBadge />
     </div>
+  );
+}
+
+export function App(): JSX.Element {
+  return (
+    <EraProvider>
+      <AppInner />
+    </EraProvider>
   );
 }
 

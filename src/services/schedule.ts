@@ -4,6 +4,8 @@
  * computes the active era and time remaining. Pure logic, suitable for tests.
  */
 
+
+
 export type EraScheduleItem = {
   id: string; // must match EraId
   start: string; // ISO
@@ -22,6 +24,15 @@ export function getActiveEra(now: Date, schedule: EraScheduleItem[]): {
   next: EraScheduleItem | null;
   msUntilFlip: number | null;
 } {
+  // 🔹 DEV OVERRIDE via .env.local
+  const forced = import.meta.env.VITE_FORCE_ERA as string | undefined;
+  if (forced) {
+    const match = schedule.find((s) => s.id === forced);
+    if (match) {
+      return { active: match, next: null, msUntilFlip: null };
+    }
+    console.warn(`[era] Forced era '${forced}' not found in schedule`);
+  }
   const time = now.getTime();
   const withMs = schedule.map((s) => ({
     ...s,

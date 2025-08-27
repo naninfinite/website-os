@@ -55,6 +55,11 @@ docs/{dev,easy,decisions,log}
 - Client loads a JSON schedule from `VITE_ERA_SCHEDULE_URL`.
 - Shows a countdown badge; at zero triggers a **Reboot overlay** → switches active era without redeploy.
 
+### Era binding (shell)
+- A provider computes the active era from the schedule or `VITE_FORCE_ERA` (dev override).
+- On era change, set `document.body.dataset.era` and toggle a theme class among `theme-terminal`, `theme-os91`, `theme-now`.
+- Shell picks layout from `layoutProfiles` keyed by `'terminal-os' | 'os-91' | 'now-os'`.
+
 ---
 
 ## Connect.EXE Roadmap

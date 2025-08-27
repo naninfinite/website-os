@@ -1,15 +1,15 @@
 /**
  * SUMMARY
  * Mobile container that renders a single app full-page with a simple top bar
- * and back button. Real navigation/gesture handling is deferred.
+ * and back button. Uses appRegistry to render the app component.
  */
 import React from 'react';
-import type { AppId } from '../app-registry/types';
-import { getAppMeta, AppStub } from '../app-registry';
+import { getAppMeta, appRegistry } from '../../shell/appRegistry';
 
-export function AppContainerPage(props: { appId: AppId; onBack: () => void }): JSX.Element {
+export function AppContainerPage(props: { appId: string; onBack: () => void }): JSX.Element {
   const { appId, onBack } = props;
   const meta = getAppMeta(appId);
+  const reg = appRegistry[appId];
   return (
     <div className="min-h-dvh flex flex-col">
       <header className="flex items-center gap-2 px-3 py-2 border-b border-foreground/10 bg-foreground/5">
@@ -19,7 +19,7 @@ export function AppContainerPage(props: { appId: AppId; onBack: () => void }): J
         <span className="text-sm font-medium">{meta.title}</span>
       </header>
       <main className="flex-1 overflow-auto">
-        <AppStub id={appId} />
+        {reg ? <reg.component /> : <div className="p-4 text-sm">Unknown app: {appId}</div>}
       </main>
     </div>
   );

@@ -1,1 +1,6 @@
-export const appMeta = { id: "settings", title: "Settings.EXE", icon: "settings"};
+import type { AppMeta } from "../../shell/appRegistry";
+export const appMeta: AppMeta = Object.freeze({
+  id: "arcade",
+  title: "Arcade.EXE",
+  icon: "arcade",
+});

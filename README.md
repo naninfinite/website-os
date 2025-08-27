@@ -45,6 +45,7 @@ Every change must update:
 	•	BUGS.md if relevant
 
 Note: Create a `.env` or `.env.local` in the project root and set `VITE_ERA_SCHEDULE_URL` (e.g., `/era-schedule.json`) before running the app in production.
+Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during local dev to override the schedule.
 
 ### Sprint 1 Status
 - Era layout profiles implemented (`src/shell/layoutProfiles.ts`)
@@ -58,6 +59,11 @@ Note: Create a `.env` or `.env.local` in the project root and set `VITE_ERA_SCHE
 - A visible countdown shows time remaining in the current era (dd:hh:mm:ss).
 - When it reaches zero, a Reboot overlay appears for ~3 seconds, then the era flips and theme tokens update via `body[data-era]`.
 - Components consume tokens from CSS variables (see `src/themes/tokens.css` and `src/themes/eraThemes.css`).
+
+## Era binding
+- Era is provided via `EraProvider` (`src/shell/era/EraContext.tsx`), which loads the schedule (or uses `VITE_FORCE_ERA`).
+- On change, it applies `body[data-era]` and toggles a theme class: `theme-terminal` | `theme-os91` | `theme-now`.
+- In dev, a small badge shows the current era (see `src/shell/DevEraBadge.tsx`).
 
 ## Testing
 

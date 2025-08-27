@@ -33,3 +33,8 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - There’s now a visible countdown (days:hours:minutes:seconds).
 - When the timer hits zero, a short “Rebooting…” overlay appears and then the OS switches to the next era.
 - Colors and fonts change automatically because themes are controlled by CSS variables for each era.
+
+## Era
+- The site picks an “era” from a schedule file.
+- Developers can force an era locally using a `.env.local` setting: `VITE_FORCE_ERA=terminal-os` (or `os-91`, `now-os`).
+- You’ll see a tiny badge in the corner in dev showing the current era.

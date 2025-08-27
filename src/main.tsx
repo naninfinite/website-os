@@ -10,6 +10,8 @@ import './themes/eraThemes.css';
 import './styles/index.css';
 import { App } from './App';
 
+console.log('[env]', import.meta.env.VITE_FORCE_ERA);
+
 const rootElement = document.getElementById('root');
 if (!rootElement) {
   throw new Error('Root element #root not found');

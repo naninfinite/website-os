@@ -23,3 +23,8 @@ All notable changes to this project will be documented here, following “Keep a
 - Fixed import paths and resolved missing file errors.
 - Implemented `VITE_FORCE_ERA` override for development testing.
 - Verified era switching logic now surfaces in UI.
+### [Unreleased]
+
+- Refactored `appMeta` exports into dedicated `meta.ts` files per app.  
+- Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings.  
+- Added Cursor rules note to enforce `AppMeta` contract consistently.

@@ -42,3 +42,8 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 ## Dev override & countdown
 - Want to preview a specific era? Create `.env.local` at the project root with `VITE_FORCE_ERA=now-os` to lock the UI to Now-OS during development.
 - The site shows a persistent countdown badge that reads the schedule and displays time remaining to the next era. Click the badge to refresh the schedule from the server.
+
+## Recents & File Browser
+- The site includes minimal **Recents.EXE** and **File Browser.EXE** apps in `src/apps/recents` and `src/apps/filebrowser`.
+- **Recents.EXE**: shows apps/files you've opened recently (stored in localStorage).
+- **File Browser.EXE**: browse the stub virtual file system (stubbed data in `src/services/fileSystem.ts`).

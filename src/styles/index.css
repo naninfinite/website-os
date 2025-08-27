@@ -83,6 +83,9 @@ body { background-color: rgb(var(--background)); color: rgb(var(--text)); }
 /* Utilities for stubs/components */
 .surface { background-color: rgb(var(--surface)); }
 .text { color: rgb(var(--text)); }
+.recents-list, .file-list { display: flex; flex-direction: column; gap: 6px; font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace); }
+.file-item, .recent-item { padding: 4px 8px; border-radius: 6px; cursor: pointer; }
+.file-item:hover, .recent-item:hover { background: rgba(0,0,0,0.08); }
 
 /* Window styles */
 .window {

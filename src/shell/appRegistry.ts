@@ -23,6 +23,10 @@ import { appMeta as dimensionMeta } from "../apps/dimension/meta";
 
 import TerminalApp from "../apps/terminal";
 import { appMeta as terminalMeta } from "../apps/terminal/meta";
+import RecentsApp from "../apps/recents/RecentsApp";
+import { appMeta as recentsMeta } from "../apps/recents/meta";
+import FileBrowserApp from "../apps/filebrowser/FileBrowserApp";
+import { appMeta as fileBrowserMeta } from "../apps/filebrowser/meta";
 
 export type AppMeta = { id: string; title: string; icon?: string };
 
@@ -38,6 +42,8 @@ export const appRegistry: Record<
   [arcadeMeta.id]: { meta: arcadeMeta, component: ArcadeApp },
   [dimensionMeta.id]: { meta: dimensionMeta, component: DimensionApp },
   [terminalMeta.id]: { meta: terminalMeta, component: TerminalApp },
+  [recentsMeta.id]: { meta: recentsMeta, component: RecentsApp },
+  [fileBrowserMeta.id]: { meta: fileBrowserMeta, component: FileBrowserApp },
 };
 
 export function getAppMeta(id: string): AppMeta | undefined {

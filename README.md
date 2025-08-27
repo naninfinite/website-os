@@ -87,6 +87,11 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - Components consume colors/spacing via CSS variables (see `src/styles/index.css`). No raw hex in components.
 - Accessibility: respects `prefers-reduced-motion` (overlay animates instantly).
 
+## Recents & File Browser
+- **Recents.EXE** (`src/apps/recents`): tracks recently opened apps and files, persists to localStorage, and surfaces a quick list. Uses `src/services/recents.ts`.
+- **File Browser.EXE** (`src/apps/filebrowser`): minimal file browser with breadcrumbs and deep-link support. Uses `src/services/fileSystem.ts` as a stubbed virtual FS.
+- Both apps are registered in the app registry (`src/shell/appRegistry.ts`) and can be opened from the launcher or taskbar.
+
 ### Dev override (local)
 Create `.env.local` at project root:
 

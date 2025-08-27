@@ -3,7 +3,7 @@
  * Mobile container that renders a single app full-page with a simple top bar
  * and back button. Uses appRegistry to render the app component.
  */
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { getAppMeta, appRegistry } from '../../shell/appRegistry';
 import { layoutProfiles } from '../../themes/layoutProfiles';
 import { useEra } from '../era/EraContext';
@@ -44,29 +44,50 @@ export function AppContainerPage(props: { appId: string; onBack: () => void }): 
 
   if (!gestureEnabled) return content;
 
-  // Motion wrapper with vertical drag to dismiss
+  // Motion wrapper with vertical drag to dismiss + scrim opacity driven by y
   const MotionDiv = motion.motion.div;
+  const y = motion.useMotionValue(0);
+  const opacity = motion.useTransform(y, [0, 200], [0, 0.35], { clamp: true });
+  const scrimRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const unsub = opacity.on('change', (v: number) => {
+      scrimRef.current?.style.setProperty('--scrim-opacity', String(v));
+    });
+    return () => unsub();
+  }, [opacity]);
+
+  const prefersReduced = useMemo(
+    () => (typeof window !== 'undefined' && 'matchMedia' in window ? window.matchMedia('(prefers-reduced-motion: reduce)').matches : false),
+    []
+  );
+
   return (
     <div className="mobile-gesture-root">
+      <div ref={scrimRef} className="app-scrim" aria-hidden="true" />
       <MotionDiv
-        drag="y"
+        drag={prefersReduced ? false : 'y'}
         dragDirectionLock
         dragConstraints={{ top: 0, bottom: 0 }}
-        dragElastic={0.2}
+        dragElastic={0.15}
         onDragEnd={(_, info) => {
-          const { offset, velocity } = info;
-          const y = offset.y as number;
-          const vy = velocity.y as number;
-          if (y > 120 || vy > 0.6) {
-            onBack();
+          const distance = (info.offset?.y as number) ?? 0;
+          const vy = (info.velocity?.y as number) ?? 0;
+          const shouldClose = distance > 120 || vy > 0.6;
+          if (shouldClose) {
+            motion.animate(y, typeof window !== 'undefined' ? window.innerHeight : 0, { duration: prefersReduced ? 0 : 0.18 }).then(() => {
+              onBack();
+              y.set(0);
+              scrimRef.current?.style.setProperty('--scrim-opacity', '0');
+            });
+          } else {
+            motion.animate(y, 0, { duration: prefersReduced ? 0 : 0.18 });
           }
         }}
-        style={{ willChange: 'transform' }}
+        style={{ willChange: 'transform', y }}
         className="mobile-gesture-card"
       >
         {content}
       </MotionDiv>
-      <div className="mobile-gesture-scrim" aria-hidden />
     </div>
   );
 }

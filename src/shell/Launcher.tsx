@@ -13,6 +13,7 @@ export function Launcher(props: { open: boolean; onClose: () => void }): JSX.Ele
   const apps = getAllApps();
   const { openApp } = useWindowing();
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -22,6 +23,13 @@ export function Launcher(props: { open: boolean; onClose: () => void }): JSX.Ele
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
+
+  useEffect(() => {
+    if (!open) return;
+    // focus the first button for keyboard navigation
+    const firstBtn = panelRef.current?.querySelector<HTMLButtonElement>('button');
+    firstBtn?.focus();
+  }, [open]);
 
   if (!open) return null;
 
@@ -36,7 +44,7 @@ export function Launcher(props: { open: boolean; onClose: () => void }): JSX.Ele
         if (e.target === containerRef.current) onClose();
       }}
     >
-      <div className="bg-background rounded-token shadow-token p-4 w-[min(90vw,900px)] max-h-[80vh] overflow-auto">
+      <div ref={panelRef} className="bg-background rounded-token shadow-token p-4 w-[min(90vw,900px)] max-h-[80vh] overflow-auto">
         <div className="grid grid-cols-4 gap-3">
           {apps.map((m) => (
             <button

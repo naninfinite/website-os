@@ -26,6 +26,19 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - On mobile, the home screen shows a list (Terminal-OS) or grid (OS-91/Now-OS) of apps. Tapping opens the app full-screen.
  - New: Desktop vs Mobile render differently via a layout profile. Desktop shows a big placeholder shell; Mobile shows a simple list or grid based on the active era.
 
+## Desktop home (by era)
+
+- **Terminal-OS**: desktop shows no icons (minimal terminal-focused layout).
+- **OS-91 & Now-OS**: desktop shows an icon grid. Use mouse or keyboard to navigate.
+
+Tip: Keyboard controls — focus the desktop and use Arrow keys to move selection, Enter or double-click to open an app, Esc to clear selection. Press `Ctrl/Cmd + Space` to open the Launcher.
+
+## Editing content
+
+- Content is stored as JSON under the `content/` directory: `projects.json`, `media.json`, and `lore.json`.
+- The frontend loads these via `src/services/content/loaders.ts` and relies on the shapes in `src/services/content/types.ts`. When adding content, keep ids kebab-cased and include the required fields (`id`, `title`, `src/summary` etc.).
+- Changing these files in dev requires a hard reload to pick up new JSON (module-level cache is used in the loaders).
+
 ## New in Chunk 2
 ## New in Chunk 3
 - Desktop has a basic Window Manager: open/move/minimize/restore and a simple taskbar.

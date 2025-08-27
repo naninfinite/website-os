@@ -1,17 +1,17 @@
 {
-    "version": 1,
-    "assets": [
+  "version": 1,
+  "assets": [
+    {
+      "version": 1,
+      "assets": [
         {
-            "version": 1,
-            "assets": [
-                {
-                    "id": "img-terminal-shot-1",
-                    "type": "image",
-                    "src": "img/terminal-shot-1.png",
-                    "alt": "Terminal-OS desktop screenshot",
-                    "credit": "© NaNinfinite"
-                }
-            ]
+          "id": "img-terminal-shot-1",
+          "type": "image",
+          "src": "public/media/img-terminal-shot-1.png",
+          "alt": "Terminal-OS desktop screenshot",
+          "credit": "© NaNinfinite"
         }
-    ]
+      ]
+    }
+  ]
 }

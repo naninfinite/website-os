@@ -5,6 +5,11 @@ All notable changes to this project will be documented here, following [Keep a C
 ### Added
 - Refactored `appMeta` exports into dedicated `meta.ts` files per app  
 - Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings  
+- Settings.EXE with theme, wallpaper, accessibility, and gesture toggles
+- Theme tokens split into `tokens.css` and `eraThemes.css`
+- EraContext user prefs with instant application & persistence
+ - Desktop home behavior by era: Terminal-OS `homeMode='none'`, OS-91/Now-OS `homeMode='icons'`; desktop icons grid, keyboard navigation, and launcher hotkey
+ - Content loaders and seed JSON for About/Projects/Gallery (`content/*.json`, `src/services/content/*`)
 
 ---
 
@@ -25,6 +30,7 @@ All notable changes to this project will be documented here, following [Keep a C
 ### Fixed
 - Completed `appRegistry` scaffold (missing app stubs, unfinished export)  
 - Typo in app registry exports causing HMR warnings  
+- Fix: Wire Settings.EXE barrel and registry import; ensure openApp('settings') mounts the app (debug log added).
 
 ### Changed
 - Updated global styles (`src/styles/index.css`) with scrim, badge, and overlay tokens  

@@ -1,14 +1,23 @@
 {
-    "version": 1,
-    "projects": [
-        {
-            "id": "p-terminal-os",
-            "title": "terminal-os",
-            "summary": "Retro CRT shell and era countdown concept.",
-            "tags": ["web", "ui", "retro"],
-            "links": { "live": "", "repo": ""},
-            "media": ["img-terminal-shot-1"],
-            "eraAvailability": ["terminal-os", "os-91", "now-os"]
-        }
-    ]
+  "version": 1,
+  "projects": [
+    {
+      "id": "p-terminal-os",
+      "title": "Terminal-OS Shell",
+      "summary": "Retro CRT shell and era countdown concept.",
+      "tags": ["web", "ui", "retro"],
+      "links": { "live": "", "repo": "" },
+      "media": ["img-terminal-shot-1"],
+      "year": 2025
+    },
+    {
+      "id": "p-dimension",
+      "title": "Dimension",
+      "summary": "Token-driven visual playground and shared wallpaper space.",
+      "tags": ["web", "visual", "multiplayer"],
+      "links": { "live": "", "repo": "" },
+      "media": [],
+      "year": 2024
+    }
+  ]
 }

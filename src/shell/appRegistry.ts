@@ -23,8 +23,10 @@ import { appMeta as dimensionMeta } from "../apps/dimension/meta";
 
 import TerminalApp from "../apps/terminal";
 import { appMeta as terminalMeta } from "../apps/terminal/meta";
+
 import RecentsApp from "../apps/recents/RecentsApp";
 import { appMeta as recentsMeta } from "../apps/recents/meta";
+
 import FileBrowserApp from "../apps/filebrowser/FileBrowserApp";
 import { appMeta as fileBrowserMeta } from "../apps/filebrowser/meta";
 
@@ -45,6 +47,9 @@ export const appRegistry: Record<
   [recentsMeta.id]: { meta: recentsMeta, component: RecentsApp },
   [fileBrowserMeta.id]: { meta: fileBrowserMeta, component: FileBrowserApp },
 };
+
+// debug: list loaded apps
+console.log('[appRegistry] loaded:', Object.keys(appRegistry));
 
 export function getAppMeta(id: string): AppMeta | undefined {
   return appRegistry[id]?.meta;

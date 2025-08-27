@@ -1,7 +1,7 @@
 {
-    "version": 1,
-    "messages": [
-        { "key": "boot.motd", "text": "Welcome to website-OS :: type HELP" },
-        { "key": "dimension.tip", "text": "Try /wallpaper in OS-91 and Now-OS"}
-    ]
+  "version": 1,
+  "messages": [
+    { "key": "about", "text": "Hi — I'm building a tiny retro-futurist OS on the web. This portfolio showcases UI experiments, small games, and token-driven visuals." },
+    { "key": "boot.motd", "text": "Welcome to website-OS :: type HELP" }
+  ]
 }

@@ -52,6 +52,12 @@ export function WindowManager(props: { children?: React.ReactNode }): JSX.Elemen
   const dragRef = useRef<DragState>(null);
 
   const openApp = (id: string) => {
+    // Ensure app is registered
+    const reg = appRegistry[id];
+    if (!reg) {
+      console.warn(`[WindowManager] openApp: unknown app '${id}'`);
+      return;
+    }
     const meta = getAppMeta(id) ?? { id, title: id, icon: undefined };
     // Cascade new windows slightly
     const openCount = windows.length;

@@ -10,3 +10,16 @@
 - Updated `appRegistry` imports to use `meta.ts`, resolving HMR warnings.  
 - Verified apps load correctly with dedicated `meta` exports.  
 - Added Cursor rules note to enforce consistent `AppMeta` contract.  
+
+## 2025-08-27
+
+### Completed
+- Implemented **swipe-to-dismiss** interaction for mobile windows  
+- Integrated scrim opacity tied to drag progress for visual feedback  
+- Updated `WindowManager` to handle shared dismissal flow across mobile + desktop  
+- Adjusted `Launcher` and `LayoutProfiles` for new opacity variable  
+- Updated global styles (`index.css`) for opacity transition  
+
+### Notes
+- Framer Motion can be extended later for smoother physics-based dismissal  
+- Current implementation keeps parity with Safari-like tab swipe UX  

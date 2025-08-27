@@ -6,21 +6,133 @@
 @tailwind utilities;
 
 :root {
-  /* Default light tokens (r g b) */
-  --bg: 250 250 250;
-  --fg: 15 15 18;
+  /* Base design tokens (use RGB triplets where components expect rgb(var(--xxx))) */
+  --background: 250 250 250;
+  --surface: 250 250 250;
+  --surface-2: 240 240 240;
+  --text: 20 20 23;
+  --text-muted: 90 90 100;
   --accent: 0 122 255;
+
+  /* Layout tokens */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --radius: 12px;
+  --shadow: 0 10px 30px rgba(0,0,0,0.12);
+
+  --duration-fast: 120ms;
+  --duration-slow: 320ms;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: 16 16 16;
-    --fg: 235 235 235;
+    --background: 16 16 16;
+    --surface: 16 16 16;
+    --surface-2: 28 28 28;
+    --text: 235 235 235;
     --accent: 88 166 255;
   }
 }
 
+/* Theme classes applied by EraProvider. Provide both hex (for global chrome) and
+   RGB triplets for components consuming either form. */
+.theme-terminal {
+  --bg: #0b0e10;
+  --fg: #a8ff60;
+  --chrome: #1a1f24;
+  --accent-hex: #5eff00;
+
+  --background: 11 14 16;
+  --surface: 11 14 16;
+  --surface-2: 26 31 36;
+  --text: 168 255 96;
+  --accent: 94 255 0;
+}
+
+.theme-os91 {
+  --bg: #c3c7cb;
+  --fg: #000000;
+  --chrome: #e5e9f2;
+  --accent-hex: #2a4b8d;
+
+  --background: 195 199 203;
+  --surface: 195 199 203;
+  --surface-2: 229 233 242;
+  --text: 0 0 0;
+  --accent: 42 75 141;
+}
+
+.theme-now {
+  --bg: #0b0d10;
+  --fg: #e7eaf0;
+  --chrome: #12161c;
+  --accent-hex: #6ea8fe;
+
+  --background: 11 13 16;
+  --surface: 11 13 16;
+  --surface-2: 18 22 28;
+  --text: 231 234 240;
+  --accent: 110 168 254;
+}
+
 html, body, #root { height: 100%; }
-body { @apply bg-background text-foreground antialiased; }
+body { background-color: rgb(var(--background)); color: rgb(var(--text)); }
+
+/* Utilities for stubs/components */
+.surface { background-color: rgb(var(--surface)); }
+.text { color: rgb(var(--text)); }
+
+/* Window styles */
+.window {
+  width: min(80vw, 900px);
+  background-color: rgb(var(--chrome, 255 255 255));
+  border: 1px solid rgba(0,0,0,0.12);
+  box-shadow: var(--shadow);
+  border-radius: var(--radius);
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  transform-origin: top left;
+  transition: transform var(--duration-fast) ease, opacity var(--duration-fast) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .window { transition: none; }
+}
+
+.window-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: rgba(0,0,0,0.04);
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.window-title { font-weight: 600; font-size: 0.95rem; }
+.window-controls { display: flex; gap: 8px; }
+.window-btn { background: transparent; border: none; padding: 4px 6px; cursor: pointer; }
+.window-btn:focus { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+
+.window-content { padding: 12px; }
+
+.window-active { box-shadow: 0 12px 40px rgba(0,0,0,0.25); }
+
+/* Mobile specific */
+.mobile-header { position: sticky; top: 0; backdrop-filter: blur(4px); }
+.mobile-content { padding-bottom: env(safe-area-inset-bottom); }
+.mobile-header .flex { padding-bottom: 0; }
+
+/* Gesture-to-dismiss styles */
+.mobile-gesture-root { position: relative; overflow: hidden; }
+.mobile-gesture-card { will-change: transform; touch-action: pan-y; }
+.mobile-gesture-scrim { pointer-events: none; position: absolute; inset: 0; background: rgba(0,0,0,0.0); transition: background 120ms linear; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mobile-gesture-card { touch-action: auto; }
+  .mobile-gesture-scrim { transition: none; }
+}
 
 

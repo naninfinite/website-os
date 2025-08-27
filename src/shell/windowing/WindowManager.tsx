@@ -6,6 +6,7 @@
  */
 import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { getAppMeta, appRegistry } from '../appRegistry';
+import { Window } from './Window';
 
 export type WindowSpec = {
   id: string;
@@ -162,6 +163,18 @@ export function WindowManager(props: { children?: React.ReactNode }): JSX.Elemen
 
   const running = windows;
 
+  // Global key handler: ESC closes active window
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeId) {
+        // close focused window
+        closeWindow(activeId);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [activeId]);
+
   return (
     <div className="h-full w-full relative select-none" aria-label="Desktop">
       <WindowingContext.Provider
@@ -174,49 +187,27 @@ export function WindowManager(props: { children?: React.ReactNode }): JSX.Elemen
         {running
           .filter((w) => !w.minimized)
           .sort((a, b) => a.z - b.z)
-          .map((win) => (
-            <div
-              key={win.id}
-              role="dialog"
-              aria-modal={false}
-              aria-labelledby={`${win.id}-title`}
-              tabIndex={-1}
-              className="absolute w-[min(80vw,900px)] bg-background/95 border border-foreground/20 shadow-lg pointer-events-auto"
-              style={{ transform: `translate(${win.x}px, ${win.y}px)`, zIndex: win.z }}
-              onMouseDown={() => focusWindow(win.id)}
-            >
-              <div
-                className="flex items-center justify-between px-3 py-2 border-b border-foreground/10 bg-foreground/5 cursor-move"
-                onMouseDown={(e) => beginDrag(win.id, e)}
-                onKeyDown={(e) => onTitleKeyDown(win.id, e)}
-                tabIndex={0}
-                id={`${win.id}-title`}
+          .map((win) => {
+            const reg = appRegistry[win.appId];
+            const Comp = reg?.component;
+            return (
+              <Window
+                key={win.id}
+                id={win.id}
+                title={win.title}
+                x={win.x}
+                y={win.y}
+                z={win.z}
+                active={activeId === win.id}
+                onClose={() => closeWindow(win.id)}
+                onMinimize={() => minimizeWindow(win.id)}
+                onFocus={() => focusWindow(win.id)}
+                onMouseDown={() => focusWindow(win.id)}
               >
-                <span className="text-sm font-medium">{win.title}</span>
-                <div className="flex items-center gap-2">
-                  <button
-                    className="text-sm opacity-80 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
-                    onClick={() => minimizeWindow(win.id)}
-                    aria-label="Minimize"
-                  >
-                    _
-                  </button>
-                  <button
-                    className="text-sm opacity-80 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
-                    onClick={() => closeWindow(win.id)}
-                    aria-label="Close"
-                  >
-                    ✕
-                  </button>
-                </div>
-              </div>
-              {(() => {
-                const reg = appRegistry[win.appId];
-                const Comp = reg?.component;
-                return Comp ? <Comp /> : <div className="p-4 text-sm">Unknown app: {win.appId}</div>;
-              })()}
-            </div>
-          ))}
+                {Comp ? <Comp /> : <div className="p-4 text-sm">Unknown app: {win.appId}</div>}
+              </Window>
+            );
+          })}
       </div>
     </div>
   );

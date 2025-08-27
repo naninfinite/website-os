@@ -17,20 +17,21 @@ export type MobileProfile = {
   windowMode: 'page-full';
   dock?: boolean;
   search?: boolean;
+  gestureDismiss?: boolean; // allow swipe-to-dismiss on mobile app pages
 };
 
 export const layoutProfiles: Record<Era, { desktop: DesktopProfile; mobile: MobileProfile }> = {
   'terminal-os': {
     desktop: { homeMode: 'none', windowMode: 'window' },
-    mobile: { homeMode: 'list', windowMode: 'page-full' },
+    mobile: { homeMode: 'list', windowMode: 'page-full', gestureDismiss: false },
   },
   'os-91': {
     desktop: { homeMode: 'icons', windowMode: 'window' },
-    mobile: { homeMode: 'grid', windowMode: 'page-full' },
+    mobile: { homeMode: 'grid', windowMode: 'page-full', gestureDismiss: false },
   },
   'now-os': {
     desktop: { homeMode: 'icons', windowMode: 'max', launcher: true },
-    mobile: { homeMode: 'grid', windowMode: 'page-full', dock: true, search: true },
+    mobile: { homeMode: 'grid', windowMode: 'page-full', dock: true, search: true, gestureDismiss: true },
   },
 };
 

@@ -23,8 +23,14 @@ All notable changes to this project will be documented here, following “Keep a
 - Fixed import paths and resolved missing file errors.
 - Implemented `VITE_FORCE_ERA` override for development testing.
 - Verified era switching logic now surfaces in UI.
-### [Unreleased]
 
+### [Unreleased]
 - Refactored `appMeta` exports into dedicated `meta.ts` files per app.  
 - Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings.  
 - Added Cursor rules note to enforce `AppMeta` contract consistently.
+
+### Added
+- **Swipe-to-dismiss gesture** for windows on mobile (`AppContainerPage`, `Home`)
+- **Unified dismissal logic** in `WindowManager` (mobile + desktop parity)
+- **Scrim opacity feedback** tied to drag progress (CSS variable + styles)
+- **Launcher/LayoutProfiles updates** to support scrim opacity transitions

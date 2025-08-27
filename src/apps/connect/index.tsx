@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'connect', title: 'Connect.EXE', icon: 'connect' };
-
 export default function ConnectApp() {
     return (
         <div>

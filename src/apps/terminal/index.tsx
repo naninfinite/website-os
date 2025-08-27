@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'terminal', title: 'Terminal.EXE', icon: 'terminal' };
-
 export default function TerminalApp() {
     return (
         <div>

@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'projects', title: 'Projects.EXE', icon: 'projects' };
-
 export default function ProjectsApp() {
     return (
         <div>

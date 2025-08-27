@@ -1,0 +1,1 @@
+export const appMeta = { id: "connect", title: "Connect.EXE", icon: "connect"};

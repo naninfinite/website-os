@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'arcade', title: 'Arcade.EXE', icon: 'arcade' };
-
 export default function ArcadeApp() {
     return (
         <div>

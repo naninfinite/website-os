@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'gallery', title: 'Gallery.EXE', icon: 'gallery' };
-
 export default function GalleryApp() {
     return (
         <div>

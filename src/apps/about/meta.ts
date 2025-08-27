@@ -1,0 +1,1 @@
+export const appMeta = { id: "about", title: "About.EXE", icon: "about"};

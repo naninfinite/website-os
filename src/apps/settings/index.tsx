@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'settings', title: 'Settings.EXE', icon: 'settings' };
-
 export default function SettingsApp() {
     return (
         <div>

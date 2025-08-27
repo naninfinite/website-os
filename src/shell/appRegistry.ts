@@ -1,13 +1,28 @@
 import type React from "react";
 
-import AboutApp, { appMeta as aboutMeta } from "../apps/about";
-import ProjectsApp, { appMeta as projectsMeta } from "../apps/projects";
-import GalleryApp, { appMeta as galleryMeta } from "../apps/gallery";
-import SettingsApp, { appMeta as settingsMeta } from "../apps/settings";
-import ConnectApp, { appMeta as connectMeta } from "../apps/connect";
-import ArcadeApp, { appMeta as arcadeMeta } from "../apps/arcade";
-import DimensionApp, { appMeta as dimensionMeta } from "../apps/dimension";
-import TerminalApp, { appMeta as terminalMeta } from "../apps/terminal";
+import AboutApp from "../apps/about";
+import { appMeta as aboutMeta } from "../apps/about/meta";
+
+import ProjectsApp from "../apps/projects";
+import { appMeta as projectsMeta } from "../apps/projects/meta";
+
+import GalleryApp from "../apps/gallery";
+import { appMeta as galleryMeta } from "../apps/gallery/meta";
+
+import SettingsApp from "../apps/settings";
+import { appMeta as settingsMeta } from "../apps/settings/meta";
+
+import ConnectApp from "../apps/connect";
+import { appMeta as connectMeta } from "../apps/connect/meta";
+
+import ArcadeApp from "../apps/arcade";
+import { appMeta as arcadeMeta } from "../apps/arcade/meta";
+
+import DimensionApp from "../apps/dimension";
+import { appMeta as dimensionMeta } from "../apps/dimension/meta";
+
+import TerminalApp from "../apps/terminal";
+import { appMeta as terminalMeta } from "../apps/terminal/meta";
 
 export type AppMeta = { id: string; title: string; icon?: string };
 
@@ -32,3 +47,5 @@ export function getAppMeta(id: string): AppMeta | undefined {
 export function getAllApps(): AppMeta[] {
   return Object.values(appRegistry).map((r) => r.meta);
 }
+
+

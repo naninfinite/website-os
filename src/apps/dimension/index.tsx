@@ -4,8 +4,6 @@
  */
 import React from 'react';
 
-export const appMeta = { id: 'dimension', title: 'Dimension.EXE', icon: 'dimension' };
-
 export default function DimensionApp() {
     return (
         <div>

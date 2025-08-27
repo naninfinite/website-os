@@ -48,14 +48,33 @@ Note: Create a `.env` or `.env.local` in the project root and set `VITE_ERA_SCHE
 Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during local dev to override the schedule.
 
 ### Sprint 1 Status
-- Era layout profiles implemented (`src/shell/layoutProfiles.ts`)
-- Countdown reads schedule from `VITE_ERA_SCHEDULE_URL` and exposes `onEraFlip` via `useCountdown`
-- Desktop WindowManager (MVP) now supports open, move (drag + arrows), minimize/restore, focus/z-order, and a simple taskbar. See `src/shell/windowing/WindowManager.tsx`.
-- Mobile: apps open full-page via `src/shell/mobile/AppContainerPage.tsx`; Home renders list/grid per era in `src/shell/mobile/Home.tsx`.
-- AppRegistry opens stubs for all apps; Mobile Home switches list/grid per era
+- **Era layout profiles** implemented (`src/themes/layoutProfiles.ts`):  
+  - Desktop: Terminal (monospace terminal), OS-91 (icons + taskbar), Now-OS (dock + search).  
+  - Mobile: Terminal (list), OS-91/Now-OS (grid; Now-OS adds dock + search).  
+
+- **Windowing (desktop)** MVP (`src/shell/windowing/WindowManager.tsx`):  
+  - Open, move (drag + arrows), minimize/restore, focus/z-order, and a simple taskbar.  
+
+- **Mobile app container** (`src/shell/mobile/AppContainerPage.tsx`):  
+  - Apps open full-page; Home switches list/grid per era.  
+  - Now-OS mobile supports swipe-to-dismiss with scrim (via Framer Motion).  
+
+- **App registry** wired; stubs exist for About, Projects, Gallery, Settings, Connect, Arcade, Dimension.  
+
+- **Era management** (`src/shell/era/EraContext.tsx`):  
+  - Loads schedule from `VITE_ERA_SCHEDULE_URL` (fallback to `public/era-schedule.json`).  
+  - Polls every 60s; ticks countdown every 1s.  
+  - Applies body theme class (`theme-terminal`, `theme-os91`, `theme-now`).  
+  - Supports `VITE_FORCE_ERA` override (locks era, suppresses overlay).  
+
+- **Countdown badge** (`src/components/CountdownBadge.tsx`):  
+  - Shows next era + time left; refreshable.  
+
+- **Reboot overlay** (`src/shell/RebootOverlay.tsx`):  
+  - Brief fade + message on flip; suppressed when `VITE_FORCE_ERA` is set.  
+  - Respects `prefers-reduced-motion`.  
 
 ## Era Schedule, Countdown & Reboot
-
 - The app loads an era schedule from `VITE_ERA_SCHEDULE_URL` (falls back to `public/era-schedule.json`).
 - `EraProvider` (`src/shell/era/EraContext.tsx`) exposes:
   - `eraId` (`terminal-os` | `os-91` | `now-os`)

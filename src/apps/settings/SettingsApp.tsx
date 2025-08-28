@@ -101,6 +101,18 @@ export default function SettingsApp(): JSX.Element {
       </section>
 
       <section>
+        <h2 className="text-sm font-semibold">Mobile Controls</h2>
+        <div className="mt-2 flex items-center gap-3">
+          <label className="text-sm">Show mobile controls</label>
+          <select className="px-2 py-1 rounded bg-foreground/10" value={userPrefs.showMobileControls ?? 'auto'} onChange={(e) => updatePrefs({ showMobileControls: e.target.value as any })} aria-label="Show mobile controls">
+            <option value="auto">Auto (pointer coarse)</option>
+            <option value="on">Always show</option>
+            <option value="off">Always hide</option>
+          </select>
+        </div>
+      </section>
+
+      <section>
         <h2 className="text-sm font-semibold">Content</h2>
         <div className="mt-2 flex items-center gap-3">
           <button

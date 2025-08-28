@@ -28,6 +28,7 @@ export type EraContextValue = {
     wallpaper: string | null;
     devEraOverride?: EraId | null; // preview override when not forced
     showArcadeFps?: boolean;
+    showMobileControls?: 'auto' | 'on' | 'off';
   };
   updatePrefs: (partial: Partial<{
     theme: 'light' | 'dark' | 'auto';
@@ -38,6 +39,7 @@ export type EraContextValue = {
     wallpaper: string | null;
     devEraOverride?: EraId | null;
     showArcadeFps?: boolean;
+    showMobileControls?: 'auto' | 'on' | 'off';
   }>) => void;
 };
 
@@ -86,9 +88,10 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
         wallpaper: typeof parsed?.wallpaper === 'string' ? parsed.wallpaper : null,
         devEraOverride: (parsed?.devEraOverride === 'terminal-os' || parsed?.devEraOverride === 'os-91' || parsed?.devEraOverride === 'now-os') ? parsed.devEraOverride : null,
         showArcadeFps: Boolean(parsed?.showArcadeFps),
+        showMobileControls: parsed?.showMobileControls ?? 'auto',
       };
     } catch {
-      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null, showArcadeFps: false };
+      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null, showArcadeFps: false, showMobileControls: 'auto' };
     }
   });
 

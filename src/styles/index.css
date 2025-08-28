@@ -248,4 +248,22 @@ body { background: var(--wallpaper, rgb(var(--background))); color: rgb(var(--te
 .arcade-stage { flex: 1; display: flex; align-items: center; justify-content: center; }
 .arcade-controls button { min-width: 44px; min-height: 44px; }
 
+/* Mobile controls */
+.mobile-controls { position: fixed; left: 0; right: 0; bottom: 12px; display: flex; justify-content: center; pointer-events: auto; }
+.dpad { display: grid; grid-template-areas: 
+  ". up ." 
+  "left . right" 
+  ". down ."; gap: 6px; }
+.dpad button { width: 44px; height: 44px; border-radius: 6px; }
+.actions { position: fixed; right: 12px; bottom: 80px; display:flex; flex-direction: column; gap:8px; }
+.actions button { min-width: 48px; min-height: 48px; border-radius: 999px; }
+
+/* Era-specific touch skins */
+.theme-terminal .mobile-controls button { border: 1px solid rgb(var(--text)); background: transparent; color: rgb(var(--text)); }
+.theme-os91 .mobile-controls button { background: rgb(var(--surface-2)); box-shadow: 0 2px 0 rgba(0,0,0,0.12); }
+.theme-now .mobile-controls button { background: rgb(var(--surface)); box-shadow: 0 8px 20px rgba(0,0,0,0.12); }
+
+/* Disable animated effects when reduced motion is requested */
+body[data-reduce-motion="true"] .mobile-controls button { transition: none !important; }
+
 

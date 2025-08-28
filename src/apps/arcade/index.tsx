@@ -27,18 +27,34 @@ export default function ArcadeApp(): JSX.Element {
   }, [game, pongState, snakeState, eraId]);
 
   // simple engine hook to step pong/snake
+  // engine with input queue processing
   React.useEffect(() => {
     const e = createEngine({
-      update: (dtMs) => {
+      update: (dtMs: number, inputs: any[] = []) => {
         if (paused) return;
-        if (game === 'pong' && pongState) setPongState((s) => (s ? updatePong(s, {}, dtMs) : s));
-        if (game === 'snake' && snakeState) setSnakeState((s) => (s ? stepSnake(s, {}) : s));
+        // apply inputs
+        let pState = pongState;
+        let sState = snakeState;
+        for (const inp of inputs) {
+          if (game === 'pong' && pState) {
+            // map input to pong updates (simple mapping)
+            pState = updatePong(pState, inp, dtMs);
+          }
+          if (game === 'snake' && sState) {
+            sState = stepSnake(sState, inp);
+          }
+        }
+        if (game === 'pong' && pState) setPongState(pState);
+        if (game === 'snake' && sState) setSnakeState(sState);
         setUps((u) => Math.min(999, u + 1));
       },
       render: () => setFps((f) => Math.min(999, f + 1)),
     });
+    (e as any).sendInput = (i: any) => (e as any).sendInput?.(i);
+    // stash on window for dev console access
+    (window as any).__arcadeEngine = e;
     e.start();
-    return () => e.stop();
+    return () => { e.stop(); delete (window as any).__arcadeEngine; };
   }, [game, pongState, snakeState, paused]);
 
   // simple FPS/UPS counters decay
@@ -64,6 +80,21 @@ export default function ArcadeApp(): JSX.Element {
         <div className="flex-1 arcade-stage">{renderer}</div>
       </div>
       {userPrefs.showArcadeFps ? <div className="arcade-fps">UPS: {ups} FPS: {fps}</div> : null}
+      {/* Mobile controls overlay (auto via CSS coarse pointer or user setting) */}
+      {(userPrefs.showMobileControls === 'on' || (userPrefs.showMobileControls === 'auto' && matchMedia && matchMedia('(pointer:coarse)').matches)) ? (
+        <div className="mobile-controls" role="region" aria-label="Arcade touch controls" style={{ touchAction: 'none' }}>
+          <div className="dpad" aria-hidden={false}>
+            <button aria-label="Up" onPointerDown={() => (window as any).__arcadeEngine?.sendInput?.({ type: 'dir', dir: 'U' })} onPointerUp={() => {}} >↑</button>
+            <button aria-label="Left" onPointerDown={() => (window as any).__arcadeEngine?.sendInput?.({ type: 'dir', dir: 'L' })}>←</button>
+            <button aria-label="Right" onPointerDown={() => (window as any).__arcadeEngine?.sendInput?.({ type: 'dir', dir: 'R' })}>→</button>
+            <button aria-label="Down" onPointerDown={() => (window as any).__arcadeEngine?.sendInput?.({ type: 'dir', dir: 'D' })}>↓</button>
+          </div>
+          <div className="actions" role="group" aria-label="Actions">
+            <button aria-label="A" onPointerDown={() => (window as any).__arcadeEngine?.sendInput?.({ type: 'action', id: 'A' })}>A</button>
+            <button aria-label="B" onPointerDown={() => (window as any).__arcadeEngine?.sendInput?.({ type: 'action', id: 'B' })}>B</button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

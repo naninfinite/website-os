@@ -84,6 +84,10 @@ export function update(state: PongState, input: PongInput, dtMs: number): PongSt
   // winner check
   if (s.p1.score >= 11 || s.p2.score >= 11) s.running = false;
 
+  // clamp velocities to prevent runaway
+  s.ball.vx = clamp(s.ball.vx, -2.0, 2.0);
+  s.ball.vy = clamp(s.ball.vy, -2.0, 2.0);
+
   return s;
 }
 

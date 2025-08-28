@@ -26,6 +26,10 @@ A living, retro-futurist portfolio that evolves in **three eras** while keeping 
 - **Connect.EXE** (social layer: presence, invites, chat, profiles later)
 - **Arcade.EXE** (Pong, Snake, **Tron 4-player** later; local + online)
 - **Dimension.EXE** (3D playground → wallpaper → shared space)
+- **Terminal.EXE**  
+  - Currently implemented as a **Toy Shell**: fun, retro terminal that can launch apps via commands (e.g., `open about`).  
+  - Apps are also accessible via desktop icons/launcher.  
+  - Future option (Sprint 3): promote to **Primary Shell** where all navigation is command-driven. See ADR-001.
 
 ## Mobile Behaviors
 - Terminal-OS: home=list

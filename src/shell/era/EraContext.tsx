@@ -27,6 +27,7 @@ export type EraContextValue = {
     gestureDismiss: boolean;
     wallpaper: string | null;
     devEraOverride?: EraId | null; // preview override when not forced
+    showArcadeFps?: boolean;
   };
   updatePrefs: (partial: Partial<{
     theme: 'light' | 'dark' | 'auto';
@@ -36,6 +37,7 @@ export type EraContextValue = {
     gestureDismiss: boolean;
     wallpaper: string | null;
     devEraOverride?: EraId | null;
+    showArcadeFps?: boolean;
   }>) => void;
 };
 
@@ -67,6 +69,7 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
     gestureDismiss: boolean;
     wallpaper: string | null;
     devEraOverride?: EraId | null;
+    showArcadeFps?: boolean;
   }>(() => {
     try {
       const rawNew = localStorage.getItem('website-os:settings');
@@ -82,9 +85,10 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
         gestureDismiss: parsed?.gestureDismiss !== false,
         wallpaper: typeof parsed?.wallpaper === 'string' ? parsed.wallpaper : null,
         devEraOverride: (parsed?.devEraOverride === 'terminal-os' || parsed?.devEraOverride === 'os-91' || parsed?.devEraOverride === 'now-os') ? parsed.devEraOverride : null,
+        showArcadeFps: Boolean(parsed?.showArcadeFps),
       };
     } catch {
-      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null };
+      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null, showArcadeFps: false };
     }
   });
 

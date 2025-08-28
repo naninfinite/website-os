@@ -91,6 +91,16 @@ export default function SettingsApp(): JSX.Element {
       </section>
 
       <section>
+        <h2 className="text-sm font-semibold">Developer</h2>
+        <div className="mt-2 flex items-center gap-3">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={userPrefs.showArcadeFps === true} onChange={(e) => updatePrefs({ showArcadeFps: e.target.checked })} />
+            Show FPS/UPS in Arcade
+          </label>
+        </div>
+      </section>
+
+      <section>
         <h2 className="text-sm font-semibold">Content</h2>
         <div className="mt-2 flex items-center gap-3">
           <button

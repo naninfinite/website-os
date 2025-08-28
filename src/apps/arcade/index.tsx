@@ -17,6 +17,9 @@ export default function ArcadeApp(): JSX.Element {
   const [pongState, setPongState] = useState<PongState | null>(() => initPong(320, 180));
   const [snakeState, setSnakeState] = useState<SnakeState | null>(() => initSnake(32, 24, 1));
   const [paused, setPaused] = useState(false);
+  const { userPrefs, updatePrefs } = useEra();
+  const [fps, setFps] = useState(0);
+  const [ups, setUps] = useState(0);
 
   const renderer = useMemo(() => {
     if (game === 'pong') return <PongRendererTerminal state={pongState ?? initPong(320,180)} />;
@@ -30,11 +33,19 @@ export default function ArcadeApp(): JSX.Element {
         if (paused) return;
         if (game === 'pong' && pongState) setPongState((s) => (s ? updatePong(s, {}, dtMs) : s));
         if (game === 'snake' && snakeState) setSnakeState((s) => (s ? stepSnake(s, {}) : s));
+        setUps((u) => Math.min(999, u + 1));
       },
+      render: () => setFps((f) => Math.min(999, f + 1)),
     });
     e.start();
     return () => e.stop();
   }, [game, pongState, snakeState, paused]);
+
+  // simple FPS/UPS counters decay
+  React.useEffect(() => {
+    const id = setInterval(() => { setFps(0); setUps(0); }, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="p-4 arcade">
@@ -43,9 +54,16 @@ export default function ArcadeApp(): JSX.Element {
         <div className="w-48 arcade-side">
           <button className="block w-full mb-2 px-3 py-2 rounded" onClick={() => setGame('pong')}>Pong</button>
           <button className="block w-full mb-2 px-3 py-2 rounded" onClick={() => setGame('snake')}>Snake</button>
+          <div className="mt-4">
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={userPrefs.showArcadeFps === true} onChange={(e) => updatePrefs({ showArcadeFps: e.target.checked })} />
+              <span className="text-xs">Show FPS/UPS</span>
+            </label>
+          </div>
         </div>
         <div className="flex-1 arcade-stage">{renderer}</div>
       </div>
+      {userPrefs.showArcadeFps ? <div className="arcade-fps">UPS: {ups} FPS: {fps}</div> : null}
     </div>
   );
 }

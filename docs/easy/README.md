@@ -77,3 +77,10 @@ Tip: Keyboard controls — focus the desktop and use Arrow keys to move selectio
 - You can type commands like `help` or `open about` to launch apps.  
 - Apps also open normally through the desktop or launcher.  
 - Later (Sprint 3), the team may switch to a **“primary shell” mode** where *all navigation* runs through the terminal — but not yet.
+
+Commands you can try:
+- `help` — show available commands
+- `apps` — list app ids and titles
+- `open <appId>` — open an app window (desktop) or full-page (mobile)
+- `clear`, `echo <text>`, `time`, `era`
+- `theme <terminal-os|os-91|now-os>` — preview era (dev only; disabled if forced)

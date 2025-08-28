@@ -233,3 +233,12 @@ body { background: var(--wallpaper, rgb(var(--background))); color: rgb(var(--te
   padding: 8px 12px; border-radius: 8px; box-shadow: 0 6px 16px rgba(0,0,0,0.2);
 }
 
+/* Terminal styles */
+.terminal { font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace); color: rgb(var(--text)); }
+.terminal-screen { min-height: 200px; max-height: 50vh; overflow: auto; padding: 8px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08); border-radius: 6px; }
+.terminal-line { white-space: pre-wrap; line-height: 1.5; }
+.terminal-input-row { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.terminal-prompt { color: rgb(var(--text-muted)); }
+.terminal-input { flex: 1; background: transparent; border: 1px solid rgba(0,0,0,0.12); padding: 6px 8px; border-radius: 6px; color: rgb(var(--text)); caret-color: rgb(var(--accent)); }
+.terminal-input:focus { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; }
+

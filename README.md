@@ -93,6 +93,11 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - Loaders are implemented in `src/services/content/loaders.ts` and typed in `src/services/content/types.ts`.
 - Adding/changing content requires editing those JSON files; a production CMS (e.g., Supabase) can be integrated later to replace these loaders.
 
+## Terminal.EXE (toy shell)
+
+- Open Terminal.EXE and type `help`, `apps`, or `open about` to launch apps.
+- Useful commands: `help`, `apps`, `open <appId>`, `clear`, `echo <text>`, `time`, `era`, `theme <terminal-os|os-91|now-os>` (preview allowed when not forced).
+
 ## Recents & File Browser
 - **Recents.EXE** (`src/apps/recents`): tracks recently opened apps and files, persists to localStorage, and surfaces a quick list. Uses `src/services/recents.ts`.
 - **File Browser.EXE** (`src/apps/filebrowser`): minimal file browser with breadcrumbs and deep-link support. Uses `src/services/fileSystem.ts` as a stubbed virtual FS.

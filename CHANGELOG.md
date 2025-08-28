@@ -11,6 +11,8 @@ All notable changes to this project will be documented here, following [Keep a C
  - Desktop home behavior by era: Terminal-OS `homeMode='none'`, OS-91/Now-OS `homeMode='icons'`; desktop icons grid, keyboard navigation, and launcher hotkey
  - Content loaders and seed JSON for About/Projects/Gallery (`content/*.json`, `src/services/content/*`)
  - Added ADR-001: Decision on Terminal.EXE navigation role (Toy Shell vs Primary Shell)
+ - Testing: added unit tests for content loaders and cache behavior (`src/services/content/__tests__/loaders.test.ts`)
+ - Settings.EXE: Respect Reduced Motion toggle, Theme Preview with reset, Clear Content Cache
 
 ---
 

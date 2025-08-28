@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview --port 5173",
     "test": "vitest",
-    "log:today": "node tools/updateDailyLog.mjs"
+    "log:today": "node tools/updateDailyLog.mjs",
+    "export:gamma": "node scripts/export-for-gamma.mjs"
   },
   "dependencies": {
     "framer-motion": "^12.23.12",

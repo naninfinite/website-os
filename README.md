@@ -115,6 +115,12 @@ Create `.env.local` at project root: VITE_FORCE_ERA=now-os
 - `EraProvider` applies the current era’s theme class on `<body>`.
 - A small **DevEraBadge** (`src/shell/DevEraBadge.tsx`) shows the active era in dev mode.
 
+## Settings
+
+- Respect Reduced Motion: when enabled (default), animations follow your OS setting. Disable to allow animations even if your OS prefers reduced motion (dev convenience).
+- Theme Preview: temporarily preview Terminal-OS / OS-91 / Now-OS visuals. When `VITE_FORCE_ERA` is set, the preview is disabled. Use “Reset to schedule” to return to the active schedule.
+- Clear Content Cache: clears in-memory caches for `content/*.json` so About/Projects/Gallery reload fresh data on next open.
+
 ## Testing
 
 Run the test suite with:

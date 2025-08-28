@@ -18,19 +18,24 @@ export type EraContextValue = {
   flipping: boolean;
   refreshSchedule: () => Promise<void>;
   setEraForDev?: (id: EraId) => void;
+  resetEraPreview?: () => void;
   userPrefs: {
     theme: 'light' | 'dark' | 'auto';
-    reducedMotion: boolean;
+    reducedMotion: boolean; // legacy
+    respectReducedMotion?: boolean; // when true (default), follow OS prefers-reduced-motion
     highContrast: boolean;
     gestureDismiss: boolean;
     wallpaper: string | null;
+    devEraOverride?: EraId | null; // preview override when not forced
   };
   updatePrefs: (partial: Partial<{
     theme: 'light' | 'dark' | 'auto';
     reducedMotion: boolean;
+    respectReducedMotion?: boolean;
     highContrast: boolean;
     gestureDismiss: boolean;
     wallpaper: string | null;
+    devEraOverride?: EraId | null;
   }>) => void;
 };
 
@@ -57,23 +62,29 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
   const [userPrefs, setUserPrefs] = useState<{
     theme: 'light' | 'dark' | 'auto';
     reducedMotion: boolean;
+    respectReducedMotion?: boolean;
     highContrast: boolean;
     gestureDismiss: boolean;
     wallpaper: string | null;
+    devEraOverride?: EraId | null;
   }>(() => {
     try {
-      const raw = localStorage.getItem('websiteos:prefs');
-      if (!raw) return { theme: 'auto', reducedMotion: false, highContrast: false, gestureDismiss: true, wallpaper: null };
+      const rawNew = localStorage.getItem('website-os:settings');
+      const rawOld = localStorage.getItem('websiteos:prefs');
+      const raw = rawNew ?? rawOld;
+      if (!raw) return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null };
       const parsed = JSON.parse(raw) as any;
       return {
         theme: parsed?.theme === 'light' || parsed?.theme === 'dark' ? parsed.theme : 'auto',
         reducedMotion: Boolean(parsed?.reducedMotion),
+        respectReducedMotion: parsed?.respectReducedMotion !== false,
         highContrast: Boolean(parsed?.highContrast),
         gestureDismiss: parsed?.gestureDismiss !== false,
         wallpaper: typeof parsed?.wallpaper === 'string' ? parsed.wallpaper : null,
+        devEraOverride: (parsed?.devEraOverride === 'terminal-os' || parsed?.devEraOverride === 'os-91' || parsed?.devEraOverride === 'now-os') ? parsed.devEraOverride : null,
       };
     } catch {
-      return { theme: 'auto', reducedMotion: false, highContrast: false, gestureDismiss: true, wallpaper: null };
+      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null };
     }
   });
 
@@ -81,11 +92,11 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
     if (schedule.length === 0) {
       setNextFlipMs(null);
       setNextEraId(null);
-      if (!isForced) setEraId('terminal-os');
+      if (!isForced) setEraId(userPrefs.devEraOverride ?? 'terminal-os');
       return;
     }
     const { active, next, msUntilFlip } = getActiveEra(new Date(), schedule);
-    if (!isForced) setEraId((active?.id as EraId) ?? 'terminal-os');
+    if (!isForced) setEraId(((userPrefs.devEraOverride ?? active?.id) as EraId) ?? 'terminal-os');
     setNextFlipMs(msUntilFlip);
     setNextEraId(next?.id ?? null);
   };
@@ -115,7 +126,7 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
   useEffect(() => {
     compute();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [schedule, isForced]);
+  }, [schedule, isForced, userPrefs.devEraOverride]);
 
   // 1s tick to update countdown; 60s poll to refresh schedule
   useEffect(() => {
@@ -166,15 +177,24 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
     } else {
       document.body.dataset.theme = userPrefs.theme;
     }
-    // motion
-    document.body.classList.toggle('reduced-motion', !!userPrefs.reducedMotion);
+    // motion: respectReducedMotion controls whether we follow OS preference; legacy reducedMotion forces reduction
+    try {
+      const prefersReduced = typeof window !== 'undefined' && 'matchMedia' in window && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const effectiveReduced = userPrefs.reducedMotion || (userPrefs.respectReducedMotion !== false ? prefersReduced : false);
+      document.body.dataset.reduceMotion = effectiveReduced ? 'true' : 'false';
+      document.body.classList.toggle('reduced-motion', effectiveReduced);
+    } catch {
+      // fallback: use legacy flag
+      document.body.dataset.reduceMotion = userPrefs.reducedMotion ? 'true' : 'false';
+      document.body.classList.toggle('reduced-motion', !!userPrefs.reducedMotion);
+    }
     // contrast
     document.body.classList.toggle('high-contrast', !!userPrefs.highContrast);
     // wallpaper classes
     document.body.classList.remove('wallpaper-crt', 'wallpaper-os91', 'wallpaper-now');
     if (userPrefs.wallpaper) document.body.classList.add(`wallpaper-${userPrefs.wallpaper}`);
     try {
-      localStorage.setItem('websiteos:prefs', JSON.stringify(userPrefs));
+      localStorage.setItem('website-os:settings', JSON.stringify(userPrefs));
     } catch {
       // ignore
     }
@@ -185,12 +205,18 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
   };
 
   const setEraForDev = (id: EraId) => {
-    if (!isForced) return;
+    if (isForced) return; // when forced by env, preview is disabled
+    setUserPrefs((prev) => ({ ...prev, devEraOverride: id }));
     setEraId(id);
   };
 
+  const resetEraPreview = () => {
+    setUserPrefs((prev) => ({ ...prev, devEraOverride: null }));
+    compute();
+  };
+
   const value = useMemo<EraContextValue>(
-    () => ({ eraId, schedule, nextFlipMs, nextEraId, isForced, flipping, refreshSchedule, setEraForDev, userPrefs, updatePrefs }),
+    () => ({ eraId, schedule, nextFlipMs, nextEraId, isForced, flipping, refreshSchedule, setEraForDev, resetEraPreview, userPrefs, updatePrefs }),
     [eraId, schedule, nextFlipMs, nextEraId, isForced, flipping, userPrefs]
   );
 

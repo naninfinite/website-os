@@ -12,6 +12,7 @@ import { RebootOverlay } from './shell/RebootOverlay';
 import { MobileHome } from './shell/mobile/Home';
 import { AppContainerPage } from './shell/mobile/AppContainerPage';
 import { EraProvider, useEra } from './shell/era/EraContext';
+import { ToastProvider } from './shell/ToastContext';
 import { DevEraBadge } from './shell/DevEraBadge';
 
 function AppInner(): JSX.Element {
@@ -46,7 +47,9 @@ function AppInner(): JSX.Element {
 export function App(): JSX.Element {
   return (
     <EraProvider>
-      <AppInner />
+      <ToastProvider>
+        <AppInner />
+      </ToastProvider>
     </EraProvider>
   );
 }

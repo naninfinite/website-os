@@ -4,10 +4,12 @@
  * Launcher. Accessible buttons with focus rings.
  */
 import React from 'react';
+import { useEra } from './era/EraContext';
 import { useWindowing } from './windowing/WindowManager';
 
 export function Taskbar(props: { onToggleLauncher: () => void }): JSX.Element {
   const { windows, activeId, restoreWindow, focusWindow, minimizeWindow } = useWindowing();
+  const { isForced, userPrefs } = useEra();
   return (
     <div className="absolute bottom-0 left-0 right-0 p-2 flex gap-2 bg-foreground/5 border-t border-foreground/10 pointer-events-auto">
       <button
@@ -17,6 +19,9 @@ export function Taskbar(props: { onToggleLauncher: () => void }): JSX.Element {
       >
         ◻︎
       </button>
+      {!isForced && userPrefs.devEraOverride ? (
+        <div className="px-2 py-1 text-xs rounded bg-foreground/10" aria-label="Preview era active">Preview: {userPrefs.devEraOverride}</div>
+      ) : null}
       {windows.map((w) => (
         <button
           key={w.id}

@@ -68,6 +68,9 @@ Tip: Keyboard controls — focus the desktop and use Arrow keys to move selectio
 
 ## Settings & Themes
 - **Settings.EXE** lets you preview eras (dev override), pick theme and wallpaper, and toggle accessibility prefs (reduced motion/high contrast). Preferences persist locally.
+  - Respect Reduced Motion: when on (default), animations follow your OS setting. Turn off to allow animations even if your OS prefers reduced motion.
+  - Theme Preview: temporarily preview Terminal-OS, OS-91, or Now-OS visuals. If `VITE_FORCE_ERA` is set, preview is disabled. Use “Reset to schedule” to go back.
+  - Clear Content Cache: clears cached reads of `content/*.json` so About/Projects/Gallery refresh their data on next open.
 
 ### Terminal.EXE (Toy Shell)
 - Right now, the terminal is a **fun extra app**.  

@@ -14,6 +14,7 @@ All notable changes to this project will be documented here, following [Keep a C
  - Testing: added unit tests for content loaders and cache behavior (`src/services/content/__tests__/loaders.test.ts`)
  - Settings.EXE: Respect Reduced Motion toggle, Theme Preview with reset, Clear Content Cache
  - Terminal.EXE: toy shell with commands (help, apps, open, clear, echo, time, era, theme)
+ - Arcade v1 scaffold: Pong and Snake deterministic cores, terminal renderers, engine loop, and core tests
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
 

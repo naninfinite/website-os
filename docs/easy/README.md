@@ -84,3 +84,8 @@ Commands you can try:
 - `open <appId>` — open an app window (desktop) or full-page (mobile)
 - `clear`, `echo <text>`, `time`, `era`
 - `theme <terminal-os|os-91|now-os>` — preview era (dev only; disabled if forced)
+
+Arcade v1 (Pong + Snake)
+
+- Open `Arcade.EXE` to play Pong or Snake locally. Use keyboard arrows / WASD or on-screen touch controls on mobile.
+- The engine is deterministic and cores live in `src/arcade/games`. Renderers vary by era (ASCII for Terminal-OS, pixel canvas for OS-91, modern canvas for Now-OS).

@@ -68,3 +68,9 @@ Tip: Keyboard controls — focus the desktop and use Arrow keys to move selectio
 
 ## Settings & Themes
 - **Settings.EXE** lets you preview eras (dev override), pick theme and wallpaper, and toggle accessibility prefs (reduced motion/high contrast). Preferences persist locally.
+
+### Terminal.EXE (Toy Shell)
+- Right now, the terminal is a **fun extra app**.  
+- You can type commands like `help` or `open about` to launch apps.  
+- Apps also open normally through the desktop or launcher.  
+- Later (Sprint 3), the team may switch to a **“primary shell” mode** where *all navigation* runs through the terminal — but not yet.

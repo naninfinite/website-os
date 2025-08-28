@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { getRecents } from '../../services/recents';
-import { useWindowing } from '../../shell/windowing/WindowManager';
+import { useWindowing } from '../../shell/windowing/context';
 
 export default function RecentsApp(): JSX.Element {
   const { openApp } = useWindowing();

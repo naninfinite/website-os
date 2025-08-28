@@ -6,7 +6,7 @@
  */
 import React, { useEffect, useRef } from 'react';
 import { getAllApps } from './appRegistry';
-import { useWindowing } from './windowing/WindowManager';
+import { useWindowing } from './windowing/context';
 
 export function Launcher(props: { open: boolean; onClose: () => void }): JSX.Element | null {
   const { open, onClose } = props;

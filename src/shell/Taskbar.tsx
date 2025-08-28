@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import { useEra } from './era/EraContext';
-import { useWindowing } from './windowing/WindowManager';
+import { useWindowing } from './windowing/context';
 
 export function Taskbar(props: { onToggleLauncher: () => void }): JSX.Element {
   const { windows, activeId, restoreWindow, focusWindow, minimizeWindow } = useWindowing();

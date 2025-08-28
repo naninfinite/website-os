@@ -4,7 +4,8 @@
  * focus/z-order. Provides context so Taskbar/Launcher can control it. Resizing
  * is deferred.
  */
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { WindowingProvider, type WindowingContextValue } from './context';
 import { getAppMeta, appRegistry } from '../appRegistry';
 import { Window } from './Window';
 
@@ -38,12 +39,7 @@ export type WindowingApi = {
   focusWindow: (id: string) => void;
 };
 
-const WindowingContext = createContext<WindowingApi | null>(null);
-export function useWindowing(): WindowingApi {
-  const ctx = useContext(WindowingContext);
-  if (!ctx) throw new Error('useWindowing must be used within WindowManager');
-  return ctx;
-}
+// useWindowing hook is exported from ./context
 
 export function WindowManager(props: { children?: React.ReactNode }): JSX.Element {
   const [windows, setWindows] = useState<WindowSpec[]>([]);
@@ -181,41 +177,57 @@ export function WindowManager(props: { children?: React.ReactNode }): JSX.Elemen
     return () => window.removeEventListener('keydown', onKey);
   }, [activeId]);
 
+  const value = useMemo<WindowingContextValue>(() => ({
+    openApp,
+    closeApp: closeWindow,
+    closeWindow,
+    minimizeWindow,
+    restoreWindow,
+    focusWindow,
+    activeId,
+    windows: windows.map((w) => ({
+      id: w.id,
+      title: w.title,
+      minimized: w.minimized,
+      close: () => closeWindow(w.id),
+      focus: () => focusWindow(w.id),
+      minimize: () => minimizeWindow(w.id),
+    })),
+  }), [windows, activeId]);
+
   return (
-    <div className="h-full w-full relative select-none" aria-label="Desktop">
-      <WindowingContext.Provider
-        value={{ windows, activeId, openApp, closeWindow, minimizeWindow, restoreWindow, focusWindow }}
-      >
+    <WindowingProvider value={value}>
+      <div className="h-full w-full relative select-none" aria-label="Desktop">
         {props.children}
-      </WindowingContext.Provider>
-      {/* Windows layer */}
-      <div className="absolute inset-0 pointer-events-none" aria-live="polite">
-        {running
-          .filter((w) => !w.minimized)
-          .sort((a, b) => a.z - b.z)
-          .map((win) => {
-            const reg = appRegistry[win.appId];
-            const Comp = reg?.component;
-            return (
-              <Window
-                key={win.id}
-                id={win.id}
-                title={win.title}
-                x={win.x}
-                y={win.y}
-                z={win.z}
-                active={activeId === win.id}
-                onClose={() => closeWindow(win.id)}
-                onMinimize={() => minimizeWindow(win.id)}
-                onFocus={() => focusWindow(win.id)}
-                onMouseDown={() => focusWindow(win.id)}
-              >
-                {Comp ? <Comp /> : <div className="p-4 text-sm">Unknown app: {win.appId}</div>}
-              </Window>
-            );
-          })}
+        {/* Windows layer */}
+        <div className="absolute inset-0 pointer-events-none" aria-live="polite">
+          {running
+            .filter((w) => !w.minimized)
+            .sort((a, b) => a.z - b.z)
+            .map((win) => {
+              const reg = appRegistry[win.appId];
+              const Comp = reg?.component;
+              return (
+                <Window
+                  key={win.id}
+                  id={win.id}
+                  title={win.title}
+                  x={win.x}
+                  y={win.y}
+                  z={win.z}
+                  active={activeId === win.id}
+                  onClose={() => closeWindow(win.id)}
+                  onMinimize={() => minimizeWindow(win.id)}
+                  onFocus={() => focusWindow(win.id)}
+                  onMouseDown={() => focusWindow(win.id)}
+                >
+                  {Comp ? <Comp /> : <div className="p-4 text-sm">Unknown app: {win.appId}</div>}
+                </Window>
+              );
+            })}
+        </div>
       </div>
-    </div>
+    </WindowingProvider>
   );
 }
 

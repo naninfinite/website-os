@@ -7,7 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useEra } from '../../shell/era/EraContext';
 import { getAllApps } from '../../shell/appRegistry';
 import { parseCommand, type CommandResult } from './parser';
-import { useWindowing } from '../../shell/windowing/WindowManager';
+import { useWindowing } from '../../shell/windowing/context';
 
 type Line = { id: number; text: string };
 

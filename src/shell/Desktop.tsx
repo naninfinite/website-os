@@ -6,7 +6,8 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { layoutProfiles, type Era as EraId } from '../themes/layoutProfiles';
 import { useEra } from './era/EraContext';
-import { WindowManager, useWindowing } from './windowing/WindowManager';
+import { WindowManager } from './windowing/WindowManager';
+import { useWindowing } from './windowing/context';
 import { Launcher } from './Launcher';
 import { Taskbar } from './Taskbar';
 import { getAllApps } from './appRegistry';

@@ -10,6 +10,7 @@ All notable changes to this project will be documented here, following [Keep a C
 - EraContext user prefs with instant application & persistence
  - Desktop home behavior by era: Terminal-OS `homeMode='none'`, OS-91/Now-OS `homeMode='icons'`; desktop icons grid, keyboard navigation, and launcher hotkey
  - Content loaders and seed JSON for About/Projects/Gallery (`content/*.json`, `src/services/content/*`)
+ - Added ADR-001: Decision on Terminal.EXE navigation role (Toy Shell vs Primary Shell)
 
 ---
 

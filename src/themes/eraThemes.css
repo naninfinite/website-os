@@ -6,6 +6,8 @@
   --surface-2: 26 31 36;
   --text: 168 255 96;
   --accent: 94 255 0;
+  --arcade-fg: var(--crt-green);
+  --arcade-bg: var(--crt-bg);
 }
 
 .theme-os91 {

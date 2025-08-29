@@ -1,30 +1,28 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import type { SnakeState } from '../../games/snake/core';
+import { TerminalPixelCanvas } from './TerminalPixelCanvas';
 
 export function SnakeRendererTerminal({ state }: { state: SnakeState }) {
-  const w = state.w;
-  const h = state.h;
-  const rows: string[] = [];
-  for (let y = 0; y < h; y++) {
-    let row = '';
-    for (let x = 0; x < w; x++) row += '·';
-    rows.push(row);
-  }
-  const head = state.snake[0];
-  rows[head.y] = replaceAt(rows[head.y], head.x, '@');
-  for (let i = 1; i < state.snake.length; i++) {
-    const s = state.snake[i];
-    rows[s.y] = replaceAt(rows[s.y], s.x, 'o');
-  }
-  rows[state.food.y] = replaceAt(rows[state.food.y], state.food.x, '*');
+  const draw = useCallback((ctx: CanvasRenderingContext2D) => {
+    const cell = 10;
+    // snake
+    ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--arcade-fg') || '#7CFF9E';
+    state.snake.forEach((seg, i) => {
+      ctx.fillRect(seg.x * cell, seg.y * cell, cell, cell);
+    });
+    // food as plus sign
+    const f = state.food;
+    ctx.fillRect(f.x * cell, f.y * cell, cell, cell);
+    ctx.fillRect(f.x * cell - cell, f.y * cell, cell, cell);
+    ctx.fillRect(f.x * cell + cell, f.y * cell, cell, cell);
+    ctx.fillRect(f.x * cell, f.y * cell - cell, cell, cell);
+    ctx.fillRect(f.x * cell, f.y * cell + cell, cell, cell);
+  }, [state]);
   return (
-    <pre aria-label="Snake" className="terminal-arcade">{rows.join('\n')}</pre>
+    <div className="terminal-frame terminal-pixel" role="img" aria-label={`Snake score ${state.score}`}>
+      <TerminalPixelCanvas width={state.w} height={state.h} cell={10} draw={draw} border={true} />
+    </div>
   );
-}
-
-function replaceAt(s: string, i: number, ch: string) {
-  if (i < 0 || i >= s.length) return s;
-  return s.substring(0, i) + ch + s.substring(i + 1);
 }
 
 

@@ -31,7 +31,8 @@ export function createEngine(opts: EngineOptions) {
     if (delta > 1000) delta = 1000;
     last = ts;
     acc += delta;
-    while (acc >= stepMs) {
+    let processed = 0;
+    while (acc >= stepMs && processed < 5) {
       // snapshot inputs for this tick
       const inputs = inputQueue.splice(0, inputQueue.length);
       // call update with dt and inputs array
@@ -42,6 +43,7 @@ export function createEngine(opts: EngineOptions) {
         console.warn('[engine] update error', err);
       }
       acc -= stepMs;
+      processed++;
     }
     if (render) render(acc / stepMs);
     rafId = requestAnimationFrame(onFrame);

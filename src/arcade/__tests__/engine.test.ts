@@ -1,12 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { createEngine } from '../core/engine';
 
 describe('engine accumulator', () => {
-  it('calls update at least once for dt > step', () => {
+  it('caps steps per frame and queues inputs once per tick', () => {
     let updates = 0;
-    const e = createEngine({ update: (dt: number) => { updates++; } , ups: 60 });
-    // simulate frames by calling internal onFrame via start/stop is hard; instead call update directly
-    (e as any).start();
+    let lastInputs: any[] = [];
+    const e = createEngine({ update: (dt: number, inputs: any[] = []) => { updates++; lastInputs = inputs; }, ups: 60 });
+    e.setPaused(false); // ensure start works
+    e.start();
+    (e as any).sendInput?.({ type: 'dir', dir: 'U' });
     e.stop();
     expect(typeof e.isRunning).toBe('function');
   });

@@ -12,6 +12,9 @@
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   --duration-fast: 120ms;
   --duration-slow: 320ms;
+  /* CRT tokens for terminal arcade */
+  --crt-green: #7CFF9E;
+  --crt-bg: #000000;
 }
 
 html, body, #root { height: 100%; }

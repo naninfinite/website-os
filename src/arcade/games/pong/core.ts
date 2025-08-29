@@ -59,7 +59,10 @@ export function update(state: PongState, input: PongInput, dtMs: number): PongSt
   const p2x = s.w - s.paddle.w;
   if (s.ball.x - s.ball.r <= p1x) {
     if (s.ball.y >= s.p1.y && s.ball.y <= s.p1.y + s.p1.h) {
-      s.ball.vx = -s.ball.vx;
+      // reflect with angle based on contact point
+      const rel = (s.ball.y - (s.p1.y + s.p1.h / 2)) / (s.p1.h / 2);
+      s.ball.vx = Math.abs(s.ball.vx);
+      s.ball.vy = rel * Math.abs(s.ball.vx);
       s.ball.x = p1x + s.ball.r + 1;
     } else {
       // p2 scores
@@ -67,17 +70,21 @@ export function update(state: PongState, input: PongInput, dtMs: number): PongSt
       s.ball.x = s.w / 2;
       s.ball.y = s.h / 2;
       s.ball.vx = Math.abs(s.ball.vx);
+      s.ball.vy = 0.14;
     }
   }
   if (s.ball.x + s.ball.r >= p2x) {
     if (s.ball.y >= s.p2.y && s.ball.y <= s.p2.y + s.p2.h) {
-      s.ball.vx = -s.ball.vx;
+      const rel = (s.ball.y - (s.p2.y + s.p2.h / 2)) / (s.p2.h / 2);
+      s.ball.vx = -Math.abs(s.ball.vx);
+      s.ball.vy = rel * Math.abs(s.ball.vx);
       s.ball.x = p2x - s.ball.r - 1;
     } else {
       s.p1.score += 1;
       s.ball.x = s.w / 2;
       s.ball.y = s.h / 2;
       s.ball.vx = -Math.abs(s.ball.vx);
+      s.ball.vy = 0.14;
     }
   }
 

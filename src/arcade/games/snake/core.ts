@@ -33,7 +33,10 @@ function equal(a: SnakeCell, b: SnakeCell) { return a.x === b.x && a.y === b.y; 
 
 export function step(state: SnakeState, input: SnakeInput): SnakeState {
   if (!state.alive) return state;
-  const dir = input.dir ?? state.dir;
+  // prevent 180 reversals
+  const opposite: Record<'U'|'D'|'L'|'R','U'|'D'|'L'|'R'> = { U:'D', D:'U', L:'R', R:'L' };
+  const proposed = input.dir && input.dir !== opposite[state.dir] ? input.dir : state.dir;
+  const dir = proposed;
   const head = { ...state.snake[0] };
   switch (dir) {
     case 'U': head.y -= 1; break;
@@ -53,9 +56,13 @@ export function step(state: SnakeState, input: SnakeInput): SnakeState {
   if (equal(head, state.food)) {
     newSnake.push(state.snake[state.snake.length - 1]);
     score += 1;
-    // deterministic next food
-    const rng = mulberry32(score + head.x + head.y + state.w + state.h);
-    newFood = { x: Math.floor(rng() * state.w), y: Math.floor(rng() * state.h) };
+    // deterministic next food not on snake
+    let tries = 0;
+    do {
+      const rng = mulberry32(score + head.x + head.y + state.w + state.h + tries);
+      newFood = { x: Math.floor(rng() * state.w), y: Math.floor(rng() * state.h) };
+      tries++;
+    } while (newSnake.some((c) => equal(c, newFood)) && tries < 1000);
   }
   return { ...state, snake: newSnake, dir, food: newFood, score };
 }

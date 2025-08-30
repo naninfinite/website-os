@@ -29,6 +29,7 @@ export type EraContextValue = {
     devEraOverride?: EraId | null; // preview override when not forced
     showArcadeFps?: boolean;
     showMobileControls?: 'auto' | 'on' | 'off';
+    terminalScanlines?: boolean;
   };
   updatePrefs: (partial: Partial<{
     theme: 'light' | 'dark' | 'auto';
@@ -40,6 +41,7 @@ export type EraContextValue = {
     devEraOverride?: EraId | null;
     showArcadeFps?: boolean;
     showMobileControls?: 'auto' | 'on' | 'off';
+    terminalScanlines?: boolean;
   }>) => void;
 };
 
@@ -89,9 +91,10 @@ export function EraProvider(props: { children: React.ReactNode }): JSX.Element {
         devEraOverride: (parsed?.devEraOverride === 'terminal-os' || parsed?.devEraOverride === 'os-91' || parsed?.devEraOverride === 'now-os') ? parsed.devEraOverride : null,
         showArcadeFps: Boolean(parsed?.showArcadeFps),
         showMobileControls: parsed?.showMobileControls ?? 'auto',
+        terminalScanlines: Boolean(parsed?.terminalScanlines),
       };
     } catch {
-      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null, showArcadeFps: false, showMobileControls: 'auto' };
+      return { theme: 'auto', reducedMotion: false, respectReducedMotion: true, highContrast: false, gestureDismiss: true, wallpaper: null, devEraOverride: null, showArcadeFps: false, showMobileControls: 'auto', terminalScanlines: false };
     }
   });
 

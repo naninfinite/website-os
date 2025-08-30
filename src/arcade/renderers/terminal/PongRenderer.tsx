@@ -3,7 +3,6 @@ import type { PongState } from '../../games/pong/core';
 import { TerminalPixelCanvas } from './TerminalPixelCanvas';
 
 export function PongRendererTerminal({ state }: { state: PongState }) {
-  const cell = 10;
   const draw = useCallback((ctx: CanvasRenderingContext2D) => {
     ctx.imageSmoothingEnabled = false;
     // midline dotted
@@ -11,27 +10,26 @@ export function PongRendererTerminal({ state }: { state: PongState }) {
     const rows = Math.floor(state.h);
     ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--arcade-fg') || '#7CFF9E';
     for (let y = 0; y < rows; y += 2) {
-      ctx.fillRect(Math.floor(cols / 2) * cell, y * cell, 1, cell);
+      ctx.fillRect(Math.floor(cols / 2), y, 1, 1);
     }
     // paddles
-    const pWidth = Math.max(1, Math.floor(state.paddle.w / (state.w / cols)));
-    const p1x = cell; const p2x = (cols - 2) * cell;
-    const p1y = Math.floor(state.p1.y / state.h * rows) * cell;
-    const p2y = Math.floor(state.p2.y / state.h * rows) * cell;
-    const pH = Math.max(cell, Math.floor(state.p1.h / state.h * rows) * cell);
-    ctx.fillRect(p1x, p1y, cell, pH);
-    ctx.fillRect(p2x, p2y, cell, pH);
+    const p1x = 1; const p2x = cols - 2;
+    const p1y = Math.floor(state.p1.y / state.h * rows);
+    const p2y = Math.floor(state.p2.y / state.h * rows);
+    const pH = Math.max(1, Math.floor(state.p1.h / state.h * rows));
+    ctx.fillRect(p1x, p1y, 1, pH);
+    ctx.fillRect(p2x, p2y, 1, pH);
     // ball
-    const bx = Math.floor(state.ball.x / state.w * cols) * cell;
-    const by = Math.floor(state.ball.y / state.h * rows) * cell;
-    ctx.fillRect(bx, by, cell, cell);
+    const bx = Math.floor(state.ball.x / state.w * cols);
+    const by = Math.floor(state.ball.y / state.h * rows);
+    ctx.fillRect(bx, by, 1, 1);
     // scores (simple 5x3 numerals)
-    drawDigit(ctx, state.p1.score % 10, 1 * cell, 1 * cell, cell);
-    drawDigit(ctx, state.p2.score % 10, (cols - 4) * cell, 1 * cell, cell);
+    drawDigit(ctx, state.p1.score % 10, 1, 1, 1);
+    drawDigit(ctx, state.p2.score % 10, cols - 4, 1, 1);
   }, [state]);
   return (
     <div className="terminal-frame terminal-pixel" role="img" aria-label={`Pong score ${state.p1.score} to ${state.p2.score}`}>
-      <TerminalPixelCanvas width={state.w} height={state.h} cell={cell} draw={draw} border={true} />
+      <TerminalPixelCanvas width={state.w} height={state.h} draw={draw} border={true} />
     </div>
   );
 }

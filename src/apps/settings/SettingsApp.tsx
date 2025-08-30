@@ -97,6 +97,10 @@ export default function SettingsApp(): JSX.Element {
             <input type="checkbox" checked={userPrefs.showArcadeFps === true} onChange={(e) => updatePrefs({ showArcadeFps: e.target.checked })} />
             Show FPS/UPS in Arcade
           </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={userPrefs.terminalScanlines === true} onChange={(e) => updatePrefs({ terminalScanlines: e.target.checked })} />
+            Terminal scanlines
+          </label>
         </div>
       </section>
 

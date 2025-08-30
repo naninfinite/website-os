@@ -10,6 +10,7 @@ export type DesktopProfile = {
   homeMode: 'none' | 'icons';
   windowMode: 'window' | 'max';
   launcher?: boolean;
+  allowHomeCustomize?: boolean;
 };
 
 export type MobileProfile = {
@@ -18,20 +19,21 @@ export type MobileProfile = {
   dock?: boolean;
   search?: boolean;
   gestureDismiss?: boolean; // allow swipe-to-dismiss on mobile app pages
+  allowHomeCustomize?: boolean;
 };
 
 export const layoutProfiles: Record<Era, { desktop: DesktopProfile; mobile: MobileProfile }> = {
   'terminal-os': {
-    desktop: { homeMode: 'none', windowMode: 'window' },
-    mobile: { homeMode: 'list', windowMode: 'page-full', gestureDismiss: false },
+    desktop: { homeMode: 'none', windowMode: 'window', allowHomeCustomize: true },
+    mobile: { homeMode: 'list', windowMode: 'page-full', gestureDismiss: false, allowHomeCustomize: true },
   },
   'os-91': {
-    desktop: { homeMode: 'icons', windowMode: 'window' },
-    mobile: { homeMode: 'grid', windowMode: 'page-full', gestureDismiss: false },
+    desktop: { homeMode: 'icons', windowMode: 'window', allowHomeCustomize: false },
+    mobile: { homeMode: 'grid', windowMode: 'page-full', gestureDismiss: false, allowHomeCustomize: false },
   },
   'now-os': {
-    desktop: { homeMode: 'icons', windowMode: 'max', launcher: true },
-    mobile: { homeMode: 'grid', windowMode: 'page-full', dock: true, search: true, gestureDismiss: true },
+    desktop: { homeMode: 'icons', windowMode: 'max', launcher: true, allowHomeCustomize: false },
+    mobile: { homeMode: 'grid', windowMode: 'page-full', dock: true, search: true, gestureDismiss: true, allowHomeCustomize: false },
   },
 };
 

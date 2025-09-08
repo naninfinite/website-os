@@ -31,6 +31,18 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - **Terminal-OS**: desktop shows no icons (minimal terminal-focused layout).
 - **OS-91 & Now-OS**: desktop shows an icon grid. Use mouse or keyboard to navigate.
 
+- The Home header on Terminal-OS can show a small inline countdown and curated Home cards. On Desktop (Terminal-OS) only these curated cards appear; use the Launcher or Terminal.EXE to access the full app list on Desktop. On Mobile, the Home screen lists all apps.
+
+- Clicking the Terminal or Dimension cards opens those apps; in dev mode these clicks are logged to the console.
+
+- Debug logs for the countdown (mount/unmount, era/next changes, refresh) and Home clicks are emitted only in development.
+
+- The Home header on Terminal-OS can show a small inline countdown and curated Home cards. On Desktop (Terminal-OS) only these curated cards appear; use the Launcher or Terminal.EXE to access the full app list on Desktop. On Mobile, the Home screen lists all apps.
+
+- Clicking the Terminal or Dimension cards opens those apps; in dev mode these clicks are logged to the console.
+
+- Debug logs for the countdown (mount/unmount, era/next changes, refresh) and Home clicks are emitted only in development.
+
 File Manager (FileMan.EXE)
 - A minimal file manager is available: `FileMan.EXE` (list vs icons view). It reads a seeded in-memory VFS (`public/content/vfs.json`).
 - Defaults: Terminal-OS/OS-91 open in icon view; Now-OS opens in list view. Use the toolbar to toggle view, navigate breadcrumbs, or refresh seeds.

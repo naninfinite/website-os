@@ -71,7 +71,7 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 
 - **Countdown badge** (`src/components/CountdownBadge.tsx`):  
   - Shows next era + time left; refreshable.  
-  - New: supports `variant="inline"` for embedding inside headers (used in HomeDashboard header card on Terminal-OS).
+  - New: supports `variant="inline"` for embedding inside headers (used in HomeDashboard header card on Terminal-OS). The inline header shows a small countdown and quick-launch cards (Terminal.EXE, Dimension.EXE) on Desktop Terminal-OS. On Desktop Terminal-OS, icons are hidden by design; use the Home panel, Launcher, or Terminal.EXE to open apps. On Mobile, the Home lists all apps.
 
 - **Reboot overlay** (`src/shell/RebootOverlay.tsx`):  
   - Brief fade + message on flip; suppressed when `VITE_FORCE_ERA` is set.  

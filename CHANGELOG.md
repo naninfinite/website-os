@@ -17,6 +17,12 @@ All notable changes to this project will be documented here, following [Keep a C
  - Arcade v1 scaffold: Pong and Snake deterministic cores, terminal renderers, engine loop, and core tests
  - Arcade glue: games playable in `Arcade.EXE` (ArcadeSurface, engine wiring, mobile controls)
  - CountdownBadge inline variant for headers; HomeDashboard header shows inline countdown with quick launchers for Terminal.EXE and Dimension.EXE on Terminal-OS desktop
+- Home: Desktop Terminal-OS panel with inline countdown; quick launch for Terminal.EXE & Dimension.EXE
+- CountdownBadge: add `variant="inline"`; add guarded debug logs
+- DesktopHomePanel: debug logs for card clicks (dev only)
+- Tests: harden engine/content; add DOM guards and `test:ci`
+- Arcade (Terminal): CRT green-on-black pixel renderers; integer-scaling canvas
+- Settings: Terminal scanlines toggle; Toast system
  - Debug logging:
  - CountdownBadge (DEBUG_COUNT) logs mount/unmount and era/next changes.
  - HomeDashboard (DEBUG_HOME) logs Terminal/Dimension card clicks.

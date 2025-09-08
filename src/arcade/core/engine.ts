@@ -8,10 +8,20 @@ export type EngineOptions = {
   update: (dtMs: number, inputs?: any[]) => void;
   render?: (interpolation: number) => void;
   ups?: number; // updates per second
+  timers?: { now: () => number; raf: (cb: FrameRequestCallback) => number; caf: (id: number) => void };
 };
 
 export function createEngine(opts: EngineOptions) {
   const { update, render, ups = 60 } = opts;
+  const hasPerf = typeof performance !== 'undefined' && typeof performance.now === 'function';
+  const hasRAF = typeof requestAnimationFrame === 'function' && typeof cancelAnimationFrame === 'function';
+  const timers = opts.timers ?? {
+    now: hasPerf ? performance.now.bind(performance) : Date.now,
+    raf: hasRAF
+      ? requestAnimationFrame
+      : (cb: FrameRequestCallback) => setTimeout(() => cb((Date.now() as unknown as number)), 16) as unknown as number,
+    caf: hasRAF ? cancelAnimationFrame : (id: number) => clearTimeout(id as unknown as any),
+  };
   const stepMs = 1000 / ups;
   let running = false;
   let last = 0;
@@ -46,20 +56,20 @@ export function createEngine(opts: EngineOptions) {
       processed++;
     }
     if (render) render(acc / stepMs);
-    rafId = requestAnimationFrame(onFrame);
+    rafId = timers.raf(onFrame);
   }
 
   function start() {
     if (running) return;
     running = true;
-    last = performance.now();
+    last = timers.now();
     acc = 0;
-    rafId = requestAnimationFrame(onFrame);
+    rafId = timers.raf(onFrame);
   }
 
   function stop() {
     running = false;
-    if (rafId) cancelAnimationFrame(rafId);
+    if (rafId) timers.caf(rafId);
     rafId = null;
     last = 0;
     acc = 0;
@@ -71,11 +81,15 @@ export function createEngine(opts: EngineOptions) {
   }
 
   // Visibility handling
+  const hasDocument = typeof document !== 'undefined';
+  const hasWindow = typeof window !== 'undefined';
   const onVis = () => {
-    if (document.hidden) setPaused(true);
+    if (hasDocument && (document as any).hidden) setPaused(true);
     else setPaused(false);
   };
-  document.addEventListener('visibilitychange', onVis);
+  if (hasDocument && typeof document.addEventListener === 'function') {
+    document.addEventListener('visibilitychange', onVis);
+  }
 
   // Blur/focus handling with debounce to avoid flapping
   let focusTimeout: number | null = null;
@@ -89,8 +103,10 @@ export function createEngine(opts: EngineOptions) {
       focusTimeout = null;
     }, 120);
   };
-  window.addEventListener('blur', onBlur);
-  window.addEventListener('focus', onFocus);
+  if (hasWindow && typeof window.addEventListener === 'function') {
+    window.addEventListener('blur', onBlur);
+    window.addEventListener('focus', onFocus);
+  }
 
   return { start, stop, setPaused, isRunning: () => running, sendInput };
 }

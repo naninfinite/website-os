@@ -31,6 +31,10 @@ There’s a timer on the site. When it hits zero, the OS “reboots” into the 
 - **Terminal-OS**: desktop shows no icons (minimal terminal-focused layout).
 - **OS-91 & Now-OS**: desktop shows an icon grid. Use mouse or keyboard to navigate.
 
+File Manager (FileMan.EXE)
+- A minimal file manager is available: `FileMan.EXE` (list vs icons view). It reads a seeded in-memory VFS (`public/content/vfs.json`).
+- Defaults: Terminal-OS/OS-91 open in icon view; Now-OS opens in list view. Use the toolbar to toggle view, navigate breadcrumbs, or refresh seeds.
+
 Tip: Keyboard controls — focus the desktop and use Arrow keys to move selection, Enter or double-click to open an app, Esc to clear selection. Press `Ctrl/Cmd + Space` to open the Launcher.
 
 ## Editing content

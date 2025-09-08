@@ -1,0 +1,25 @@
+{
+  "id": "root",
+  "name": "/",
+  "kind": "folder",
+  "children": [
+    {
+      "id": "desk",
+      "name": "Desktop",
+      "kind": "folder",
+      "children": [
+        { "id": "readme", "name": "README.txt", "kind": "file", "mime": "text/plain", "href": "/README.md" }
+      ]
+    },
+    {
+      "id": "work",
+      "name": "Work",
+      "kind": "folder",
+      "children": [
+        { "id": "proj", "name": "Projects", "kind": "folder", "children": [] }
+      ]
+    }
+  ]
+}
+
+

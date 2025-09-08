@@ -1,0 +1,11 @@
+.fm-toolbar { display:flex; gap:8px; align-items:center; }
+.fm-breadcrumb { display:flex; gap:6px; }
+.fm-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(96px,1fr)); gap:8px; }
+.fm-tile { padding:8px; border:1px solid rgba(var(--text),0.12); border-radius:8px; text-align:center; background: rgb(var(--surface-2)); }
+.fm-tile:focus { outline: 3px solid rgba(var(--accent),0.18); }
+.fm-list { width:100%; border-collapse:collapse; } .fm-list th, .fm-list td { padding:6px 8px; border-bottom:1px solid rgba(var(--text),0.06); }
+.fm-preview { border-left:1px solid rgba(var(--text),0.06); padding:8px; min-width:200px; }
+
+.theme-terminal .fm-tile { background: var(--arcade-bg, var(--crt-bg)); color: var(--arcade-fg, var(--crt-green)); border-color: color-mix(in oklab, var(--arcade-fg, var(--crt-green)) 30%, transparent); }
+
+

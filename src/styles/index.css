@@ -2,6 +2,7 @@
    design tokens using CSS variables. Themes override these variables. */
 @import url('../themes/tokens.css');
 @import url('../themes/eraThemes.css');
+@import url('../apps/fileman/styles.css');
 
 @tailwind base;
 @tailwind components;

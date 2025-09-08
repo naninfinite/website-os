@@ -29,6 +29,8 @@ import { appMeta as recentsMeta } from "../apps/recents/meta";
 
 import FileBrowserApp from "../apps/filebrowser/FileBrowserApp";
 import { appMeta as fileBrowserMeta } from "../apps/filebrowser/meta";
+import FileManApp from "../apps/fileman";
+import { appMeta as fileManMeta } from "../apps/fileman/meta";
 
 export type AppMeta = { id: string; title: string; icon?: string };
 
@@ -46,6 +48,7 @@ export const appRegistry: Record<
   [terminalMeta.id]: { meta: terminalMeta, component: TerminalApp },
   [recentsMeta.id]: { meta: recentsMeta, component: RecentsApp },
   [fileBrowserMeta.id]: { meta: fileBrowserMeta, component: FileBrowserApp },
+  [fileManMeta.id]: { meta: fileManMeta, component: FileManApp },
 };
 
 // debug: list loaded apps

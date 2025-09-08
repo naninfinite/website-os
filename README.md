@@ -106,6 +106,10 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - **File Browser.EXE** (`src/apps/filebrowser`): minimal file browser with breadcrumbs and deep-link support. Uses `src/services/fileSystem.ts` as a stubbed virtual FS.
 - Both apps are registered in the app registry (`src/shell/appRegistry.ts`) and can be opened from the launcher or taskbar.
 
+File Manager (FileMan.EXE)
+- `FileMan.EXE` is a small file manager MVP that reads a seeded in-memory VFS at `public/content/vfs.json`. It supports icon and list views, breadcrumb navigation, keyboard access, and a tiny preview for files without external links.
+- Defaults follow era: Terminal-OS/OS-91 default to icons view; Now-OS defaults to list view.
+
 ## Settings & Themes
 - **Settings.EXE** (`src/apps/settings`): preview and control era (dev override), choose theme (light/dark/auto), pick wallpapers, and toggle accessibility options (reduced motion, high contrast). Preferences persist to localStorage and apply via body classes (`.reduced-motion`, `.high-contrast`, `wallpaper-*`).
 - Theme tokens are split into `src/themes/tokens.css` (base tokens) and `src/themes/eraThemes.css` (era overrides). The active era class (`theme-terminal|theme-os91|theme-now`) is applied to `<body>` by `EraProvider`.

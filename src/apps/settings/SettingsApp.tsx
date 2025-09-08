@@ -7,6 +7,7 @@ import React from 'react';
 import { useEra } from '../../shell/era/EraContext';
 import { type Era as EraId } from '../../themes/layoutProfiles';
 import { clearContentCache } from '../../services/content/loaders';
+import { clearVfsCache } from '../../services/vfs/memoryVfs';
 import { useToast } from '../../shell/ToastContext';
 
 export default function SettingsApp(): JSX.Element {
@@ -119,15 +120,27 @@ export default function SettingsApp(): JSX.Element {
       <section>
         <h2 className="text-sm font-semibold">Content</h2>
         <div className="mt-2 flex items-center gap-3">
-          <button
-            className="px-3 py-2 rounded bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
-            onClick={() => {
-              clearContentCache();
-              addToast('Content cache cleared');
-            }}
-          >
-            Clear Content Cache
-          </button>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <button
+              className="px-3 py-2 rounded bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
+              onClick={() => {
+                clearContentCache();
+                addToast('Content cache cleared');
+              }}
+            >
+              Clear Content Cache
+            </button>
+            <button
+              className="px-3 py-2 rounded bg-foreground/10 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
+              onClick={() => {
+                if (import.meta.env.DEV) console.log('[Settings] clear VFS cache');
+                clearVfsCache();
+                addToast('VFS cache cleared');
+              }}
+            >
+              Clear VFS Cache
+            </button>
+          </div>
           <span className="text-xs opacity-60">Clears in-memory JSON caches for this session.</span>
         </div>
       </section>

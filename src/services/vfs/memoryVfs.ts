@@ -95,6 +95,7 @@ export function cd(current: VfsPath, segment: string): VfsPath {
   const next = segment.startsWith('/') ? normalizePath(segment) : normalizePath((cur === '/' ? '' : cur) + '/' + segment);
   // prevent escaping above root
   if (!next.startsWith('/')) return '/';
+  if (DEBUG_VFS) console.log('[VFS] cd', { from: cur, to: next });
   return next;
 }
 

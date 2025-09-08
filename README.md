@@ -109,6 +109,7 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 File Manager (FileMan.EXE)
 - `FileMan.EXE` is a small file manager MVP that reads a seeded in-memory VFS at `public/content/vfs.json`. It supports icon and list views, breadcrumb navigation, keyboard access, and a tiny preview for files without external links.
 - Defaults follow era: Terminal-OS/OS-91 default to icons view; Now-OS defaults to list view.
+- Developer: Settings now includes a **Clear VFS Cache** action (dev-only) to reload the seeded VFS during development.
 
 ## Settings & Themes
 - **Settings.EXE** (`src/apps/settings`): preview and control era (dev override), choose theme (light/dark/auto), pick wallpapers, and toggle accessibility options (reduced motion, high contrast). Preferences persist to localStorage and apply via body classes (`.reduced-motion`, `.high-contrast`, `wallpaper-*`).

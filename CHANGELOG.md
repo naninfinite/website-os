@@ -17,8 +17,15 @@ All notable changes to this project will be documented here, following [Keep a C
  - Arcade v1 scaffold: Pong and Snake deterministic cores, terminal renderers, engine loop, and core tests
  - Arcade glue: games playable in `Arcade.EXE` (ArcadeSurface, engine wiring, mobile controls)
  - CountdownBadge inline variant for headers; HomeDashboard header shows inline countdown with quick launchers for Terminal.EXE and Dimension.EXE on Terminal-OS desktop
+ - Debug logging:
+ - CountdownBadge (DEBUG_COUNT) logs mount/unmount and era/next changes.
+ - HomeDashboard (DEBUG_HOME) logs Terminal/Dimension card clicks.
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
+ - Desktop: added guard in Enter key handler (prevents crash when no icons available).
+ - CountdownBadge: DEBUG_COUNT logs for mount/unmount and state changes.
+ - HomeDashboard/DesktopHomePanel: DEBUG_HOME logs for Terminal/Dimension card clicks.
+ - Desktop Enter key press no longer crashes when no icons are present.
 
 ---
 

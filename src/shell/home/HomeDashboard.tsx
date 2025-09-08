@@ -6,6 +6,8 @@
  */
 import React, { useMemo, useRef, useState } from 'react';
 
+const DEBUG_HOME = true; // set false to silence
+
 export type HomeCardSpec = { id: 'icon'|'selector'|'terminal'|'dimension'; component: React.ReactNode; featured?: boolean };
 
 export function HomeDashboard(props: {

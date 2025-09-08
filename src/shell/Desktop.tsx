@@ -14,6 +14,8 @@ import { getAllApps } from './appRegistry';
 import { HomeDashboard, type HomeCardSpec } from './home/HomeDashboard';
 import { CountdownBadge } from '../components/CountdownBadge';
 
+const DEBUG_HOME = true; // set false to silence
+
 export function Desktop(props: { era: EraId }): JSX.Element {
   const { eraId } = useEra();
   const profile = useMemo(() => layoutProfiles[eraId as EraId], [eraId]);
@@ -87,7 +89,7 @@ function DesktopIcons(): JSX.Element {
         break;
       case 'Enter':
         e.preventDefault();
-        if (selectedIndex !== null) openApp(apps[selectedIndex].id);
+        if (selectedIndex !== null && apps[selectedIndex]) {openApp(apps[selectedIndex].id);}
         break;
       case 'Escape':
         e.preventDefault();
@@ -142,7 +144,10 @@ function DesktopHomePanel(): JSX.Element {
       component: (
         <button
           className="btn"
-          onClick={() => openApp('terminal')}
+          onClick={() => {
+            if (DEBUG_HOME) console.log("[HomeDashboard] Terminal card clicked")
+            openApp('terminal')
+          }}
           aria-label="Open Terminal.EXE"
         >
           Open Terminal.EXE
@@ -154,7 +159,10 @@ function DesktopHomePanel(): JSX.Element {
       component: (
         <button
           className="btn"
-          onClick={() => openApp('dimension')}
+          onClick={() => {
+            if (DEBUG_HOME) console.log("[HomeDashboard] Dimension card clicked")
+            openApp('dimension')
+          }}
           aria-label="Open Dimension.EXE"
         >
           Open Dimension.EXE

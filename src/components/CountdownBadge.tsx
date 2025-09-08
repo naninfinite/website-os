@@ -3,8 +3,11 @@
  * Countdown badge that shows next era and remaining time. Supports refresh and
  * dev override display. Uses EraProvider context.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { useEra } from '../shell/era/EraContext';
+
+//debug constant
+const DEBUG_COUNT = true; // set false to silence
 
 function formatRemaining(ms: number): string {
   const total = Math.max(0, Math.floor(ms / 1000));
@@ -26,6 +29,31 @@ export function CountdownBadge(props: { variant?: 'badge' | 'inline' } = {}): JS
   const { variant = 'badge' } = props;
   const { eraId, nextEraId, nextFlipMs, isForced, refreshSchedule } = useEra();
   const [justRefreshed, setJustRefreshed] = useState(false);
+
+  //mount/unmount logs
+  useEffect(() => {
+    if (DEBUG_COUNT) console.log(`[CountdownBadge] mounted (variant=${variant})`);
+    return () => {
+      if (DEBUG_COUNT) console.log("[CountdownBadge] unmounted");
+    };
+  }, [variant]);
+
+  //when countdown updates
+  useEffect(() => {
+    if (DEBUG_COUNT) {
+      console.log(
+        `[CountdownBadge] eraId=${eraId}, nextEraId=${nextEraId}, isForced=${isForced}`
+      )
+    }
+  }, [eraId, nextEraId, isForced]);
+
+  //when refresh clicked
+  const handleRefresh = async () => {
+    if (DEBUG_COUNT) console.log('[CountdownBadge] refresh clicked');
+    await refreshSchedule?.();
+    setJustRefreshed(true);
+    setTimeout(() => setJustRefreshed(false), 1500);
+  };
 
   const label = useMemo(() => {
     if (isForced) return `Dev: ${eraId} (override)`;

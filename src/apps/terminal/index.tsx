@@ -7,14 +7,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useEra } from '../../shell/era/EraContext';
 import { getAllApps } from '../../shell/appRegistry';
 import { parseCommand, type CommandResult } from './parser';
-import { useWindowing } from '../../shell/windowing/context';
 
 type Line = { id: number; text: string };
 
 export default function TerminalApp(): JSX.Element {
   const { eraId, isForced, setEraForDev, userPrefs } = useEra();
-  const { openApp } = useWindowing();
   const [lines, setLines] = useState<Line[]>([{ id: 0, text: 'Type help to begin.' }]);
+  useEffect(() => {
+    if (import.meta.env.DEV) console.log('[TerminalApp] mounted');
+  }, []);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const [histIdx, setHistIdx] = useState<number>(-1);
@@ -41,7 +42,8 @@ export default function TerminalApp(): JSX.Element {
         setLines([]);
         break;
       case 'open':
-        openApp(res.appId);
+        // On desktop, host window provides chrome; on mobile, simply inform user.
+        addLines([`(open) ${res.appId}`]);
         break;
       case 'noop':
         break;
@@ -95,7 +97,7 @@ export default function TerminalApp(): JSX.Element {
   };
 
   return (
-    <div className="terminal">
+    <div className="terminal-root terminal">
       <div className="terminal-screen" role="log" aria-live="polite">
         {lines.map((l) => (
           <div key={l.id} className="terminal-line">{l.text}</div>

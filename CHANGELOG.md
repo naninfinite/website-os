@@ -23,6 +23,8 @@ All notable changes to this project will be documented here, following [Keep a C
 - Tests: harden engine/content; add DOM guards and `test:ci`
 - Arcade (Terminal): CRT green-on-black pixel renderers; integer-scaling canvas
 - Settings: Terminal scanlines toggle; Toast system
+- fix(desktop): layer Home under windows; correct z-index
+- fix(mobile): Terminal.EXE full-height container and theme colors
  - Debug logging:
  - CountdownBadge (DEBUG_COUNT) logs mount/unmount and era/next changes.
  - HomeDashboard (DEBUG_HOME) logs Terminal/Dimension card clicks.

@@ -197,7 +197,7 @@ export function WindowManager(props: { children?: React.ReactNode }): JSX.Elemen
 
   return (
     <WindowingProvider value={value}>
-      <div className="h-full w-full relative select-none" aria-label="Desktop">
+      <div className="wm-root h-full w-full relative select-none" aria-label="Desktop">
         {props.children}
         {/* Windows layer */}
         <div className="absolute inset-0 pointer-events-none" aria-live="polite">

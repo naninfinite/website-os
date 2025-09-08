@@ -31,16 +31,23 @@ export function Desktop(props: { era: EraId }): JSX.Element {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+  if (import.meta.env.DEV) console.log('[Desktop] render: home-underlay + window-layer');
   return (
-    <div className="min-h-dvh" style={{ backgroundColor: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
-      <WindowManager>
-        {/* Terminal-OS: show HomeDashboard panel above desktop (header card + quick launchers) */}
+    <div className="desktop-root">
+      {/* Home layer (underlay) */}
+      <div className="desktop-home-underlay">
         {profile.desktop.homeMode === 'none' ? <DesktopHomePanel /> : null}
-        {/* Desktop icons (rendered only for eras with icons enabled) */}
-        {profile.desktop.homeMode === 'icons' ? <DesktopIcons /> : null}
-        <Launcher open={launcherOpen} onClose={() => setLauncherOpen(false)} />
-        <Taskbar onToggleLauncher={() => setLauncherOpen((v) => !v)} />
-      </WindowManager>
+      </div>
+
+      {/* Window layer (overlay) */}
+      <div className="desktop-window-layer">
+        <WindowManager>
+          {/* Desktop icons (rendered only for eras with icons enabled) */}
+          {profile.desktop.homeMode === 'icons' ? <DesktopIcons /> : null}
+          <Launcher open={launcherOpen} onClose={() => setLauncherOpen(false)} />
+          <Taskbar onToggleLauncher={() => setLauncherOpen((v) => !v)} />
+        </WindowManager>
+      </div>
     </div>
   );
 }

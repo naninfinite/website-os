@@ -27,7 +27,7 @@ export function AppContainerPage(props: { appId: string; onBack: () => void }): 
   const gestureEnabled = profile.gestureDismiss === true && motion;
 
   const content = (
-    <div className="min-h-dvh flex flex-col" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
+    <div className="mobile-app-page" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
       <header className="sticky top-0 z-10 mobile-header">
         <div className="flex items-center gap-2 px-3 py-3 border-b border-foreground/10 bg-foreground/5" style={{ paddingTop: 'env(safe-area-inset-top, 12px)' }}>
           <button className="px-3 py-2 rounded bg-foreground/10" onClick={onBack} aria-label="Back">
@@ -36,7 +36,7 @@ export function AppContainerPage(props: { appId: string; onBack: () => void }): 
           <span className="text-sm font-medium">{meta?.title ?? appId}</span>
         </div>
       </header>
-      <main className="flex-1 overflow-auto mobile-content">
+      <main className="mobile-app-content">
         {reg ? <reg.component /> : <div className="p-4 text-sm">Unknown app: {appId}</div>}
       </main>
     </div>
@@ -83,7 +83,7 @@ export function AppContainerPage(props: { appId: string; onBack: () => void }): 
             motion.animate(y, 0, { duration: prefersReduced ? 0 : 0.18 });
           }
         }}
-        style={{ willChange: 'transform', y }}
+        style={{ willChange: 'transform', y, minHeight: '100%' }}
         className="mobile-gesture-card"
       >
         {content}

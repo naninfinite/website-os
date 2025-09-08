@@ -10,7 +10,7 @@ import type { VfsNode, VfsPath, VfsFile, VfsFolder } from '../../services/vfs/ty
 import * as vfs from '../../services/vfs/memoryVfs';
 import '../../apps/fileman/styles.css';
 
-const DEBUG_FILEMAN = import.meta.env.DEV && true;
+const DEBUG_FILEMAN = typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV;
 
 export default function FileManApp(): JSX.Element {
   const { eraId } = useEra();
@@ -44,6 +44,10 @@ export default function FileManApp(): JSX.Element {
     // when era changes, only set initial view (do not override user's choice)
     setView((cur) => (cur ? cur : defaultView));
   }, [defaultView]);
+
+  useEffect(() => {
+    if (DEBUG_FILEMAN) console.log('[FileMan] cwd changed:', path);
+  }, [path]);
 
   const refresh = async () => {
     if (DEBUG_FILEMAN) console.log('[FileMan] refresh');
@@ -111,6 +115,10 @@ export default function FileManApp(): JSX.Element {
         e.preventDefault();
         up();
         break;
+      case 'Escape':
+        e.preventDefault();
+        up();
+        break;
     }
   };
 
@@ -125,8 +133,24 @@ export default function FileManApp(): JSX.Element {
     return parts;
   }, [path]);
 
+  // Global shortcuts: Cmd/Ctrl+1 = icons, Cmd/Ctrl+2 = list, Alt+Left goes up
+  const onKeyGlobal: React.KeyboardEventHandler<HTMLDivElement> = (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === '1') {
+      e.preventDefault();
+      setView('icons');
+    }
+    if ((e.metaKey || e.ctrlKey) && e.key === '2') {
+      e.preventDefault();
+      setView('list');
+    }
+    if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'Backspace')) {
+      e.preventDefault();
+      up();
+    }
+  };
+
   return (
-    <div className="p-3 min-h-[240px] flex gap-4">
+    <div className="p-3 min-h-[240px] flex gap-4" onKeyDown={onKeyGlobal}>
       <div style={{ flex: 1 }}>
         <div className="fm-toolbar">
           <div className="fm-breadcrumb" role="navigation" aria-label="Breadcrumb">

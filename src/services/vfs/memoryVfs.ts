@@ -4,14 +4,16 @@
 // loadSeeds, list, cd, findById, clearVfsCache.
 
 import type { VfsFolder, VfsNode, VfsRoot, VfsPath } from './types';
+const DEBUG_VFS = typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV;
 
 let cachedRoot: VfsRoot | null = null;
 
 function normalizePath(path: VfsPath): VfsPath {
   if (!path) return '/';
   if (!path.startsWith('/')) path = '/' + path;
-  // collapse multiple slashes
-  return path.replace(/\/+/g, '/').replace(/\/\/$/, '/') || '/';
+  // collapse multiple slashes and trim trailing slash (except root)
+  const collapsed = path.replace(/\/+/g, '/');
+  return collapsed !== '/' ? collapsed.replace(/\/$/, '') : '/';
 }
 
 function segments(path: VfsPath): string[] {
@@ -27,6 +29,7 @@ export async function loadSeeds(): Promise<VfsRoot> {
     if (!resp.ok) throw new Error('vfs seed not found');
     const data = (await resp.json()) as VfsRoot;
     cachedRoot = data;
+    if (DEBUG_VFS) console.log('[VFS] loaded seeds');
     return data;
   } catch (err) {
     // Fallback: minimal built-in seed
@@ -47,6 +50,7 @@ export async function loadSeeds(): Promise<VfsRoot> {
       ],
     };
     cachedRoot = fallback;
+    if (DEBUG_VFS) console.log('[VFS] loaded fallback seeds');
     return fallback;
   }
 }
@@ -68,11 +72,17 @@ export function list(path: VfsPath, root?: VfsRoot): VfsNode[] {
   const base = root ?? cachedRoot;
   if (!base) throw new Error('VFS not loaded');
   const segs = segments(path);
-  if (segs.length === 0) return base.children;
+  if (segs.length === 0) {
+    const rootSorted = [...base.children].sort((a, b) => (a.kind !== b.kind ? (a.kind === 'folder' ? -1 : 1) : a.name.localeCompare(b.name)));
+    if (DEBUG_VFS) console.log('[VFS] list', '/', { count: rootSorted.length });
+    return rootSorted;
+  }
   const node = findInFolder(base, segs);
   if (!node) throw new Error(`Path not found: ${path}`);
   if (node.kind === 'file') throw new Error(`Path is a file: ${path}`);
-  return node.children;
+  const result = [...node.children].sort((a, b) => (a.kind !== b.kind ? (a.kind === 'folder' ? -1 : 1) : a.name.localeCompare(b.name)));
+  if (DEBUG_VFS) console.log('[VFS] list', normalizePath(path), { count: result.length });
+  return result;
 }
 
 export function cd(current: VfsPath, segment: string): VfsPath {

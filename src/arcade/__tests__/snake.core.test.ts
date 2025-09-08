@@ -1,4 +1,5 @@
 import { init, step } from '../games/snake/core';
+import { test, expect } from 'vitest';
 
 test('snake moves and eats food deterministically', () => {
   const s = init(10, 10, 42);

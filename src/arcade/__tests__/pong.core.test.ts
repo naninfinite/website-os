@@ -1,4 +1,5 @@
 import { init, update } from '../games/pong/core';
+import { test, expect } from 'vitest';
 
 test('pong ball moves and scores', () => {
   const s = init(200, 120, { ai: false });

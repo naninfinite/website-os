@@ -17,7 +17,7 @@ Tapping an app opens it **full-screen**.
 - **Dimension** is a 3D space that grows from a fun window → live wallpaper → shared multiplayer room.
 
 **Countdown:**  
-There’s a timer on the site. When it hits zero, the OS “reboots” into the next era.
+There’s a timer on the site. When it hits zero, the OS “reboots” into the next era. You’ll see the timer as a small badge in the corner, and sometimes as a tiny label in the Home header.
 
 ## What works now (Sprint 1)
 - The site knows which era is active based on a public schedule file.

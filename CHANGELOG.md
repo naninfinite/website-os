@@ -16,6 +16,7 @@ All notable changes to this project will be documented here, following [Keep a C
  - Terminal.EXE: toy shell with commands (help, apps, open, clear, echo, time, era, theme)
  - Arcade v1 scaffold: Pong and Snake deterministic cores, terminal renderers, engine loop, and core tests
  - Arcade glue: games playable in `Arcade.EXE` (ArcadeSurface, engine wiring, mobile controls)
+ - CountdownBadge inline variant for headers; HomeDashboard header shows inline countdown with quick launchers for Terminal.EXE and Dimension.EXE on Terminal-OS desktop
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
 

@@ -11,6 +11,8 @@ import { useWindowing } from './windowing/context';
 import { Launcher } from './Launcher';
 import { Taskbar } from './Taskbar';
 import { getAllApps } from './appRegistry';
+import { HomeDashboard, type HomeCardSpec } from './home/HomeDashboard';
+import { CountdownBadge } from '../components/CountdownBadge';
 
 export function Desktop(props: { era: EraId }): JSX.Element {
   const { eraId } = useEra();
@@ -30,6 +32,8 @@ export function Desktop(props: { era: EraId }): JSX.Element {
   return (
     <div className="min-h-dvh" style={{ backgroundColor: 'rgb(var(--surface))', color: 'rgb(var(--text))' }}>
       <WindowManager>
+        {/* Terminal-OS: show HomeDashboard panel above desktop (header card + quick launchers) */}
+        {profile.desktop.homeMode === 'none' ? <DesktopHomePanel /> : null}
         {/* Desktop icons (rendered only for eras with icons enabled) */}
         {profile.desktop.homeMode === 'icons' ? <DesktopIcons /> : null}
         <Launcher open={launcherOpen} onClose={() => setLauncherOpen(false)} />
@@ -116,6 +120,55 @@ function DesktopIcons(): JSX.Element {
           </button>
         </div>
       ))}
+    </div>
+  );
+}
+
+function DesktopHomePanel(): JSX.Element {
+  const { openApp } = useWindowing();
+  const cards: HomeCardSpec[] = [
+    {
+      id: 'icon',
+      component: (
+        <div className="flex items-center justify-between">
+          <div className="font-medium text-sm">Welcome</div>
+          <CountdownBadge variant="inline" />
+        </div>
+      ),
+      featured: true,
+    },
+    {
+      id: 'terminal',
+      component: (
+        <button
+          className="btn"
+          onClick={() => openApp('terminal')}
+          aria-label="Open Terminal.EXE"
+        >
+          Open Terminal.EXE
+        </button>
+      ),
+    },
+    {
+      id: 'dimension',
+      component: (
+        <button
+          className="btn"
+          onClick={() => openApp('dimension')}
+          aria-label="Open Dimension.EXE"
+        >
+          Open Dimension.EXE
+        </button>
+      ),
+    },
+  ];
+  return (
+    <div className="p-4">
+      <HomeDashboard
+        cards={cards}
+        customize={false}
+        onReorder={() => {}}
+      />
     </div>
   );
 }

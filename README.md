@@ -58,6 +58,8 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - **Mobile app container** (`src/shell/mobile/AppContainerPage.tsx`):  
   - Apps open full-page; Home switches list/grid per era.  
   - Now-OS mobile supports swipe-to-dismiss with scrim (via Framer Motion).  
+  
+  Desktop Terminal-OS shows a small Home panel with a header (inline countdown) and quick launch buttons for Terminal.EXE and Dimension.EXE.
 
 - **App registry** wired; stubs exist for About, Projects, Gallery, Settings, Connect, Arcade, Dimension.  
 
@@ -69,6 +71,7 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 
 - **Countdown badge** (`src/components/CountdownBadge.tsx`):  
   - Shows next era + time left; refreshable.  
+  - New: supports `variant="inline"` for embedding inside headers (used in HomeDashboard header card on Terminal-OS).
 
 - **Reboot overlay** (`src/shell/RebootOverlay.tsx`):  
   - Brief fade + message on flip; suppressed when `VITE_FORCE_ERA` is set.  

@@ -15,7 +15,15 @@ function formatRemaining(ms: number): string {
   return dd > 0 ? `${dd}d ${hh}:${mm}:${ss}` : `${hh}:${mm}:${ss}`;
 }
 
-export function CountdownBadge(): JSX.Element | null {
+export function CountdownBadge(props: { variant?: 'badge' | 'inline' } = {}): JSX.Element | null {
+  /**
+   * SUMMARY
+   * Countdown badge/label that shows the next era and remaining time. Default
+   * renders as a fixed "badge" in the corner; when `variant="inline"` it
+   * renders inline for embedding in headers (e.g., HomeDashboard header card).
+   * Uses EraProvider context and supports manual refresh on click.
+   */
+  const { variant = 'badge' } = props;
   const { eraId, nextEraId, nextFlipMs, isForced, refreshSchedule } = useEra();
   const [justRefreshed, setJustRefreshed] = useState(false);
 
@@ -26,6 +34,23 @@ export function CountdownBadge(): JSX.Element | null {
   }, [isForced, eraId, nextEraId, nextFlipMs]);
 
   if (!label) return null;
+
+  if (variant === 'inline') {
+    return (
+      <button
+        className="text-xs px-2 py-1 rounded bg-foreground/10 hover:bg-foreground/20 focus:outline-none focus:ring-2 focus:ring-[rgb(var(--accent))]"
+        aria-label="Refresh schedule"
+        onClick={async () => {
+          await refreshSchedule();
+          setJustRefreshed(true);
+          window.setTimeout(() => setJustRefreshed(false), 800);
+        }}
+        title="Click to refresh schedule"
+      >
+        {justRefreshed ? 'Refreshed ✓ ' : ''}{label}
+      </button>
+    );
+  }
 
   return (
     <button

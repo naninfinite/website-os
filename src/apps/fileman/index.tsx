@@ -1,13 +1,14 @@
 /**
  * SUMMARY
- * Minimal File Manager (FileMan.EXE) MVP. Uses an in-memory VFS seeded from
- * `public/content/vfs.json`. Supports list/icons views, breadcrumb navigation,
- * keyboard navigation, and a tiny preview for files without href.
+ * Minimal File Manager (FileMan.EXE) MVP. Uses a localStorage-backed VFS
+ * layered on seeds from `public/content/vfs.json`. Supports list/icons views,
+ * breadcrumb navigation, keyboard navigation, selection, and a small preview
+ * for files without href. User-created folders persist across reloads.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useEra } from '../../shell/era/EraContext';
 import type { VfsNode, VfsPath, VfsFile, VfsFolder } from '../../services/vfs/types';
-import * as vfs from '../../services/vfs/memoryVfs';
+import * as vfs from '../../services/vfs/localVfs';
 import '../../apps/fileman/styles.css';
 
 const DEBUG_FILEMAN = typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV;
@@ -20,6 +21,7 @@ export default function FileManApp(): JSX.Element {
   const [nodes, setNodes] = useState<VfsNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<VfsFile | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const gridRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
@@ -62,12 +64,18 @@ export default function FileManApp(): JSX.Element {
     setLoading(false);
   };
 
+  const selectNode = (n: VfsNode) => {
+    setSelectedId(n.id);
+    if (n.kind === 'file') setPreview(n as VfsFile);
+  };
+
   const openNode = (n: VfsNode) => {
     if (n.kind === 'folder') {
       const nextPath = (path === '/' ? '' : path) + '/' + n.name;
       if (DEBUG_FILEMAN) console.log('[FileMan] cd', nextPath);
       setPath(nextPath);
       setPreview(null);
+      setSelectedId(null);
       setNodes(vfs.list(nextPath));
       return;
     }
@@ -85,6 +93,7 @@ export default function FileManApp(): JSX.Element {
     const next = '/' + segs.slice(0, -1).join('/');
     if (DEBUG_FILEMAN) console.log('[FileMan] up ->', next || '/');
     setPath(next || '/');
+    setSelectedId(null);
     setNodes(vfs.list(next || '/'));
   };
 
@@ -109,7 +118,7 @@ export default function FileManApp(): JSX.Element {
         break;
       case 'Enter':
         e.preventDefault();
-        gridRefs.current[idx]?.click();
+        openNode(nodes[idx]);
         break;
       case 'Backspace':
         e.preventDefault();
@@ -119,6 +128,25 @@ export default function FileManApp(): JSX.Element {
         e.preventDefault();
         up();
         break;
+    }
+  };
+
+  const newFolder = () => {
+    try {
+      // Generate a unique name like "New Folder", "New Folder (2)", ...
+      const base = 'New Folder';
+      let candidate = base;
+      let num = 2;
+      const names = new Set(nodes.map((n) => n.name));
+      while (names.has(candidate)) {
+        candidate = `${base} (${num++})`;
+      }
+      const created = vfs.mkdir(path, candidate);
+      setNodes(vfs.list(path));
+      setSelectedId(created.id);
+    } catch (err) {
+      // no-op; could show toast later
+      if (DEBUG_FILEMAN) console.warn('[FileMan] newFolder failed', err);
     }
   };
 
@@ -169,6 +197,7 @@ export default function FileManApp(): JSX.Element {
             ))}
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+            <button onClick={newFolder} aria-label="New Folder">New Folder</button>
             <button onClick={() => { setView((v) => (v === 'list' ? 'icons' : 'list')); if (DEBUG_FILEMAN) console.log('[FileMan] view toggle', view); }} aria-label="Toggle view">
               {view === 'list' ? 'Icons' : 'List'}
             </button>
@@ -184,9 +213,10 @@ export default function FileManApp(): JSX.Element {
                 <button
                   key={n.id}
                   ref={(el) => (gridRefs.current[idx] = el)}
-                  className="fm-tile"
+                  className={`fm-tile${selectedId === n.id ? ' fm-selected' : ''}`}
                   role="listitem"
-                  onClick={() => openNode(n)}
+                  onClick={() => selectNode(n)}
+                  onDoubleClick={() => openNode(n)}
                   onKeyDown={(e) => onKeyGrid(e, idx)}
                   tabIndex={0}
                 >
@@ -205,9 +235,9 @@ export default function FileManApp(): JSX.Element {
               </thead>
               <tbody>
                 {nodes.map((n) => (
-                  <tr key={n.id}>
+                  <tr key={n.id} className={selectedId === n.id ? 'fm-selected' : ''}>
                     <td>
-                      <button className="text-left" onClick={() => openNode(n)}>{n.name}</button>
+                      <button className="text-left" onClick={() => selectNode(n)} onDoubleClick={() => openNode(n)}>{n.name}</button>
                     </td>
                     <td>{n.kind}</td>
                   </tr>

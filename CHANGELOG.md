@@ -25,6 +25,7 @@ All notable changes to this project will be documented here, following [Keep a C
 - Settings: Terminal scanlines toggle; Toast system
 - fix(desktop): layer Home under windows; correct z-index
 - fix(mobile): Terminal.EXE full-height container and theme colors
+ - fix(desktop): render Home underlay inside WindowManager; correct z-index
  - Debug logging:
  - CountdownBadge (DEBUG_COUNT) logs mount/unmount and era/next changes.
  - HomeDashboard (DEBUG_HOME) logs Terminal/Dimension card clicks.

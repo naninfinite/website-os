@@ -5,9 +5,10 @@
 @import url('../apps/fileman/styles.css');
 /* Desktop layering */
 .desktop-root { position: relative; min-height: 100vh; background: var(--bg); color: var(--fg); }
-.desktop-home-underlay { position: absolute; inset: 0; z-index: 0; }
-.desktop-window-layer { position: relative; z-index: 10; }
-.wm-root { position: relative; z-index: 10; }
+.desktop-window-layer { position: relative; z-index: 0; }
+.wm-underlay { position: absolute; inset: 0; z-index: 0; }
+.wm-root { position: relative; z-index: 0; }
+.wm-windows { position: relative; z-index: 10; }
 .taskbar { position: relative; z-index: 20; }
 @media (max-width: 640px) { .desktop-root { min-height: 100dvh; } }
 

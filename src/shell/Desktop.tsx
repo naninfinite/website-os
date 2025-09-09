@@ -31,17 +31,18 @@ export function Desktop(props: { era: EraId }): JSX.Element {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
-  if (import.meta.env.DEV) console.log('[Desktop] render: home-underlay + window-layer');
+  if (import.meta.env.DEV) console.log('[Desktop] render: wm-underlay + windows');
   return (
     <div className="desktop-root">
-      {/* Home layer (underlay) */}
-      <div className="desktop-home-underlay">
-        {profile.desktop.homeMode === 'none' ? <DesktopHomePanel /> : null}
-      </div>
-
       {/* Window layer (overlay) */}
       <div className="desktop-window-layer">
         <WindowManager>
+          {/* Home underlay rendered INSIDE WindowManager for context access */}
+          {profile.desktop.homeMode === 'none' && (
+            <div className="wm-underlay">
+              <DesktopHomePanel />
+            </div>
+          )}
           {/* Desktop icons (rendered only for eras with icons enabled) */}
           {profile.desktop.homeMode === 'icons' ? <DesktopIcons /> : null}
           <Launcher open={launcherOpen} onClose={() => setLauncherOpen(false)} />

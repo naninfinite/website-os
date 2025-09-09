@@ -200,7 +200,7 @@ export function WindowManager(props: { children?: React.ReactNode }): JSX.Elemen
       <div className="wm-root h-full w-full relative select-none" aria-label="Desktop">
         {props.children}
         {/* Windows layer */}
-        <div className="absolute inset-0 pointer-events-none" aria-live="polite">
+        <div className="wm-windows absolute inset-0 pointer-events-none" aria-live="polite">
           {running
             .filter((w) => !w.minimized)
             .sort((a, b) => a.z - b.z)

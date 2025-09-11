@@ -32,6 +32,8 @@ All notable changes to this project will be documented here, following [Keep a C
  - FileMan.EXE: add File Manager MVP with in-memory VFS (`public/content/vfs.json`), list/icons views, breadcrumb navigation, and preview.
 ### Tests
 - test(vfs): add localVfs persistence tests (storage DI + module reset)
+### FileMan
+- FileMan.EXE v1: create folder, inline rename, delete, multi-select, keyboard shortcuts, status bar
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
  - Desktop: added guard in Enter key handler (prevents crash when no icons available).

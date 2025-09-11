@@ -84,6 +84,9 @@ function generateId(prefix = 'u'): string {
   return `${prefix}-${Date.now().toString(36)}-${salt}`;
 }
 
+// Additive ID alias used by wrappers
+export type VfsId = string;
+
 export async function loadSeeds(): Promise<VfsRoot> {
   if (cachedRoot) return cachedRoot;
   const storage = getStorage();
@@ -142,6 +145,40 @@ export function findById(id: string): VfsNode | undefined {
   return undefined;
 }
 
+function findFolderAndParentById(id: VfsId): { parent: VfsFolder | null; folder: VfsFolder } | null {
+  if (!cachedRoot) return null;
+  if (cachedRoot.id === id) return { parent: null, folder: cachedRoot };
+  type StackItem = { parent: VfsFolder | null; node: VfsNode };
+  const stack: StackItem[] = [{ parent: null, node: cachedRoot }];
+  while (stack.length) {
+    const cur = stack.shift()!;
+    if (cur.node.kind === 'folder') {
+      for (const child of cur.node.children) {
+        if (child.kind === 'folder') {
+          if (child.id === id) return { parent: cur.node, folder: child };
+          stack.push({ parent: cur.node, node: child });
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function ensureUniqueName(parentFolder: VfsFolder, desiredName: string): string {
+  const trimmed = desiredName.trim();
+  if (!trimmed) return desiredName;
+  const existing = new Set(parentFolder.children.map((c) => c.name));
+  if (!existing.has(trimmed)) return trimmed;
+  const base = trimmed;
+  let n = 2;
+  let candidate = `${base} (${n})`;
+  while (existing.has(candidate)) {
+    n += 1;
+    candidate = `${base} (${n})`;
+  }
+  return candidate;
+}
+
 function assertFolderAtPath(path: VfsPath): VfsFolder {
   if (!cachedRoot) throw new Error('VFS not loaded');
   const segs = segments(path);
@@ -151,15 +188,29 @@ function assertFolderAtPath(path: VfsPath): VfsFolder {
   return node as VfsFolder;
 }
 
-export function mkdir(path: VfsPath, name: string): VfsFolder {
+export function mkdir(path: VfsPath, name: string): VfsFolder;
+export function mkdir(parentId: VfsId, name: string): Promise<VfsId>;
+export function mkdir(pathOrId: string, name: string): VfsFolder | Promise<VfsId> {
   if (!cachedRoot) throw new Error('VFS not loaded');
-  const target = assertFolderAtPath(path);
-  if (!name || /\//.test(name)) throw new Error('Invalid folder name');
-  if (target.children.some((c) => c.name === name)) throw new Error('Name already exists');
-  const folder: VfsFolder = { id: generateId('dir'), name, kind: 'folder', children: [] };
-  target.children.push(folder);
+  // Path-based (existing behavior: throws on duplicate)
+  if (pathOrId.startsWith('/')) {
+    const target = assertFolderAtPath(pathOrId);
+    if (!name || /\//.test(name)) throw new Error('Invalid folder name');
+    if (target.children.some((c) => c.name === name)) throw new Error('Name already exists');
+    const folder: VfsFolder = { id: generateId('dir'), name, kind: 'folder', children: [] };
+    target.children.push(folder);
+    persist();
+    return folder;
+  }
+  // ID-based wrapper: ensures unique sibling name and returns new id
+  const found = findFolderAndParentById(pathOrId as VfsId);
+  if (!found) return Promise.reject(new Error('Parent not found'));
+  const parent = found.folder;
+  const unique = ensureUniqueName(parent, name);
+  const folder: VfsFolder = { id: generateId('dir'), name: unique, kind: 'folder', children: [] };
+  parent.children.push(folder);
   persist();
-  return folder;
+  return Promise.resolve(folder.id);
 }
 
 export function createFile(path: VfsPath, name: string, init?: Partial<Omit<VfsFile, 'kind' | 'name' | 'id'>>): VfsFile {
@@ -216,6 +267,35 @@ export function deleteById(id: string): void {
     }
   }
   throw new Error('Node not found');
+}
+
+// Async wrappers for UI/tests; non-breaking additions
+export async function rename(id: VfsId, nextName: string): Promise<void> {
+  if (!cachedRoot) return;
+  const trimmed = String(nextName ?? '').trim();
+  if (!trimmed) return;
+  type StackItem = { parent: VfsFolder | null; node: VfsNode };
+  const stack: StackItem[] = [{ parent: null, node: cachedRoot }];
+  while (stack.length) {
+    const cur = stack.shift()!;
+    if (cur.node.id === id) {
+      if (!cur.parent) return; // do not rename root
+      (cur.node as any).name = ensureUniqueName(cur.parent, trimmed);
+      persist();
+      return;
+    }
+    if (cur.node.kind === 'folder') stack.push(...cur.node.children.map((c) => ({ parent: cur.node as VfsFolder, node: c })));
+  }
+}
+
+export async function remove(id: VfsId): Promise<void> {
+  deleteById(id);
+}
+
+// Helper: resolve folder id by path (additive)
+export function getFolderIdByPath(path: VfsPath): VfsId {
+  const folder = assertFolderAtPath(path);
+  return folder.id;
 }
 
 export default {

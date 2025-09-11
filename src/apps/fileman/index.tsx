@@ -21,7 +21,10 @@ export default function FileManApp(): JSX.Element {
   const [nodes, setNodes] = useState<VfsNode[]>([]);
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState<VfsFile | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [anchorIndex, setAnchorIndex] = useState<number | null>(null);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState<string>('');
   const gridRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   useEffect(() => {
@@ -64,9 +67,36 @@ export default function FileManApp(): JSX.Element {
     setLoading(false);
   };
 
-  const selectNode = (n: VfsNode) => {
-    setSelectedId(n.id);
+  const selectSingleAt = (idx: number) => {
+    const n = nodes[idx];
+    if (!n) return;
+    setSelectedIds([n.id]);
+    setAnchorIndex(idx);
+    setRenamingId(null);
     if (n.kind === 'file') setPreview(n as VfsFile);
+    if (DEBUG_FILEMAN) console.log('[FileMan] select', n.name);
+  };
+
+  const toggleSelectAt = (idx: number) => {
+    const n = nodes[idx];
+    if (!n) return;
+    setSelectedIds((prev) => {
+      const set = new Set(prev);
+      if (set.has(n.id)) set.delete(n.id); else set.add(n.id);
+      return Array.from(set);
+    });
+    setAnchorIndex(idx);
+  };
+
+  const rangeSelectTo = (idx: number) => {
+    if (anchorIndex === null) {
+      selectSingleAt(idx);
+      return;
+    }
+    const start = Math.min(anchorIndex, idx);
+    const end = Math.max(anchorIndex, idx);
+    const rangeIds = nodes.slice(start, end + 1).map((n) => n.id);
+    setSelectedIds(rangeIds);
   };
 
   const openNode = (n: VfsNode) => {
@@ -75,7 +105,7 @@ export default function FileManApp(): JSX.Element {
       if (DEBUG_FILEMAN) console.log('[FileMan] cd', nextPath);
       setPath(nextPath);
       setPreview(null);
-      setSelectedId(null);
+      setSelectedIds([]);
       setNodes(vfs.list(nextPath));
       return;
     }
@@ -93,7 +123,7 @@ export default function FileManApp(): JSX.Element {
     const next = '/' + segs.slice(0, -1).join('/');
     if (DEBUG_FILEMAN) console.log('[FileMan] up ->', next || '/');
     setPath(next || '/');
-    setSelectedId(null);
+    setSelectedIds([]);
     setNodes(vfs.list(next || '/'));
   };
 
@@ -131,23 +161,57 @@ export default function FileManApp(): JSX.Element {
     }
   };
 
-  const newFolder = () => {
+  const newFolder = async () => {
     try {
-      // Generate a unique name like "New Folder", "New Folder (2)", ...
-      const base = 'New Folder';
-      let candidate = base;
-      let num = 2;
-      const names = new Set(nodes.map((n) => n.name));
-      while (names.has(candidate)) {
-        candidate = `${base} (${num++})`;
-      }
-      const created = vfs.mkdir(path, candidate);
+      const cwdId = vfs.getFolderIdByPath(path);
+      const newId = await vfs.mkdir(cwdId, 'New Folder');
+      if (DEBUG_FILEMAN) console.log('[FileMan] mkdir "New Folder" -> id=' + newId);
       setNodes(vfs.list(path));
-      setSelectedId(created.id);
+      setSelectedIds([newId]);
+      setRenamingId(newId);
+      setRenameValue('New Folder');
     } catch (err) {
-      // no-op; could show toast later
       if (DEBUG_FILEMAN) console.warn('[FileMan] newFolder failed', err);
     }
+  };
+
+  const startRename = () => {
+    if (selectedIds.length !== 1) return;
+    const id = selectedIds[0];
+    const node = nodes.find((n) => n.id === id);
+    if (!node) return;
+    setRenamingId(id);
+    setRenameValue(node.name);
+  };
+
+  const commitRename = async () => {
+    if (!renamingId) return;
+    const node = nodes.find((n) => n.id === renamingId);
+    const next = (renameValue ?? '').trim();
+    if (!node || !next || next === node.name) {
+      setRenamingId(null);
+      return;
+    }
+    await vfs.rename(renamingId, next);
+    if (DEBUG_FILEMAN) console.log('[FileMan] rename id=' + renamingId + ' "' + node.name + '" -> "' + next + '"');
+    setNodes(vfs.list(path));
+    setRenamingId(null);
+  };
+
+  const cancelRename = () => {
+    setRenamingId(null);
+  };
+
+  const removeSelection = async () => {
+    if (selectedIds.length === 0) return;
+    if (!confirm(`Delete ${selectedIds.length} selected item(s)?`)) return;
+    for (const id of selectedIds) {
+      await vfs.remove(id);
+    }
+    if (DEBUG_FILEMAN) console.log('[FileMan] remove count=' + selectedIds.length);
+    setSelectedIds([]);
+    setRenamingId(null);
+    setNodes(vfs.list(path));
   };
 
   const crumbs = useMemo(() => {
@@ -170,6 +234,21 @@ export default function FileManApp(): JSX.Element {
     if ((e.metaKey || e.ctrlKey) && e.key === '2') {
       e.preventDefault();
       setView('list');
+    }
+    if ((e.metaKey || e.ctrlKey) && (e.key === 'n' || e.key === 'N')) {
+      e.preventDefault();
+      newFolder();
+    }
+    if (e.key === 'F2') {
+      e.preventDefault();
+      startRename();
+    }
+    if (e.key === 'Delete' || e.key === 'Backspace') {
+      // Allow Backspace only when not navigating up via Alt+Backspace
+      if (!(e.altKey && e.key === 'Backspace')) {
+        e.preventDefault();
+        removeSelection();
+      }
     }
     if (e.altKey && (e.key === 'ArrowLeft' || e.key === 'Backspace')) {
       e.preventDefault();
@@ -197,11 +276,13 @@ export default function FileManApp(): JSX.Element {
             ))}
           </div>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-            <button onClick={newFolder} aria-label="New Folder">New Folder</button>
-            <button onClick={() => { setView((v) => (v === 'list' ? 'icons' : 'list')); if (DEBUG_FILEMAN) console.log('[FileMan] view toggle', view); }} aria-label="Toggle view">
+            <button className="btn" onClick={newFolder} aria-label="New Folder">New Folder</button>
+            <button className="btn" onClick={startRename} disabled={selectedIds.length !== 1} aria-label="Rename">Rename</button>
+            <button className="btn" onClick={removeSelection} disabled={selectedIds.length === 0} aria-label="Delete">Delete</button>
+            <button className="btn" onClick={() => { setView((v) => (v === 'list' ? 'icons' : 'list')); if (DEBUG_FILEMAN) console.log('[FileMan] view toggle', view); }} aria-label="Toggle view">
               {view === 'list' ? 'Icons' : 'List'}
             </button>
-            <button onClick={refresh} aria-label="Refresh">Refresh</button>
+            <button className="btn" onClick={refresh} aria-label="Refresh">Refresh</button>
           </div>
         </div>
 
@@ -209,21 +290,39 @@ export default function FileManApp(): JSX.Element {
           {loading ? <div>Loading…</div> : null}
           {view === 'icons' ? (
             <div className="fm-grid" role="list" aria-label="File list">
-              {nodes.map((n, idx) => (
-                <button
-                  key={n.id}
-                  ref={(el) => (gridRefs.current[idx] = el)}
-                  className={`fm-tile${selectedId === n.id ? ' fm-selected' : ''}`}
-                  role="listitem"
-                  onClick={() => selectNode(n)}
-                  onDoubleClick={() => openNode(n)}
-                  onKeyDown={(e) => onKeyGrid(e, idx)}
-                  tabIndex={0}
-                >
-                  <div style={{ fontSize: 24, marginBottom: 6 }}>{n.kind === 'folder' ? '📁' : '📄'}</div>
-                  <div className="text-sm truncate w-full">{n.name}</div>
-                </button>
-              ))}
+              {nodes.map((n, idx) => {
+                const isSelected = selectedIds.includes(n.id);
+                const onItemClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+                  if (e.shiftKey) return rangeSelectTo(idx);
+                  if (e.metaKey || e.ctrlKey) return toggleSelectAt(idx);
+                  selectSingleAt(idx);
+                };
+                return (
+                  <button
+                    key={n.id}
+                    ref={(el) => (gridRefs.current[idx] = el)}
+                    className={`fm-tile${isSelected ? ' fm-selected' : ''}`}
+                    role="listitem"
+                    onClick={onItemClick}
+                    onDoubleClick={() => openNode(n)}
+                    onKeyDown={(e) => onKeyGrid(e, idx)}
+                    tabIndex={0}
+                  >
+                    <div style={{ fontSize: 24, marginBottom: 6 }}>{n.kind === 'folder' ? '📁' : '📄'}</div>
+                    {renamingId === n.id ? (
+                      <input
+                        className="fm-rename-input"
+                        value={renameValue}
+                        onChange={(e) => setRenameValue(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); commitRename(); } if (e.key === 'Escape') { e.preventDefault(); cancelRename(); } }}
+                        autoFocus
+                      />
+                    ) : (
+                      <div className="text-sm truncate w-full">{n.name}</div>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           ) : (
             <table className="fm-list" role="table">
@@ -234,17 +333,39 @@ export default function FileManApp(): JSX.Element {
                 </tr>
               </thead>
               <tbody>
-                {nodes.map((n) => (
-                  <tr key={n.id} className={selectedId === n.id ? 'fm-selected' : ''}>
-                    <td>
-                      <button className="text-left" onClick={() => selectNode(n)} onDoubleClick={() => openNode(n)}>{n.name}</button>
-                    </td>
-                    <td>{n.kind}</td>
-                  </tr>
-                ))}
+                {nodes.map((n, idx) => {
+                  const isSelected = selectedIds.includes(n.id);
+                  const onRowClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+                    if (e.shiftKey) return rangeSelectTo(idx);
+                    if (e.metaKey || e.ctrlKey) return toggleSelectAt(idx);
+                    selectSingleAt(idx);
+                  };
+                  return (
+                    <tr key={n.id} className={isSelected ? 'fm-selected' : ''}>
+                      <td>
+                        {renamingId === n.id ? (
+                          <input
+                            className="fm-rename-input"
+                            value={renameValue}
+                            onChange={(e) => setRenameValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); commitRename(); } if (e.key === 'Escape') { e.preventDefault(); cancelRename(); } }}
+                            autoFocus
+                          />
+                        ) : (
+                          <button className="text-left" onClick={onRowClick} onDoubleClick={() => openNode(n)}>{n.name}</button>
+                        )}
+                      </td>
+                      <td>{n.kind}</td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           )}
+        </div>
+        <div className="fm-statusbar" role="status" aria-live="polite">
+          <div>{nodes.length} items • {selectedIds.length} selected</div>
+          <div className="opacity-70 truncate" title={path}>{path}</div>
         </div>
       </div>
 

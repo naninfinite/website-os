@@ -9,4 +9,15 @@
 
 .theme-terminal .fm-tile { background: var(--arcade-bg, var(--crt-bg)); color: var(--arcade-fg, var(--crt-green)); border-color: color-mix(in oklab, var(--arcade-fg, var(--crt-green)) 30%, transparent); }
 
+/* Toolbar buttons */
+.fm-toolbar .btn { padding: 6px 10px; border: 1px solid color-mix(in oklab, rgb(var(--text)) 15%, transparent); border-radius: 6px; background: rgb(var(--surface)); color: rgb(var(--text)); }
+.fm-toolbar .btn[disabled] { opacity: .5; cursor: not-allowed; }
+
+/* Inline rename */
+.fm-rename-input { width: 100%; font-size: 0.875rem; padding: 4px 6px; border: 1px solid color-mix(in oklab, rgb(var(--text)) 20%, transparent); border-radius: 4px; background: rgb(var(--surface)); color: rgb(var(--text)); }
+.fm-rename-input:focus { outline: 2px solid rgba(var(--accent), 0.4); outline-offset: 2px; }
+
+/* Status bar */
+.fm-statusbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 8px; border-top: 1px solid rgba(var(--text),0.08); position: sticky; bottom: 0; background: rgb(var(--surface)); }
+
 

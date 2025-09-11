@@ -139,5 +139,9 @@ Create `.env.local` at project root: VITE_FORCE_ERA=now-os
 Run the test suite with:
 
 ```bash
-npm run test
+npm run test            # run tests in watch or default mode
+npm run test:ci         # run tests once in CI (node env)
 ```
+
+Notes:
+- `localVfs` includes CI-safe persistence tests using an injectable `Storage` shim and module resets.

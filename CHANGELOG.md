@@ -30,6 +30,8 @@ All notable changes to this project will be documented here, following [Keep a C
  - CountdownBadge (DEBUG_COUNT) logs mount/unmount and era/next changes.
  - HomeDashboard (DEBUG_HOME) logs Terminal/Dimension card clicks.
  - FileMan.EXE: add File Manager MVP with in-memory VFS (`public/content/vfs.json`), list/icons views, breadcrumb navigation, and preview.
+### Tests
+- test(vfs): add localVfs persistence tests (storage DI + module reset)
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
  - Desktop: added guard in Enter key handler (prevents crash when no icons available).

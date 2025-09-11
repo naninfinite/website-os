@@ -10,27 +10,39 @@ import * as seedVfs from './memoryVfs';
 const DEBUG_LOCAL_VFS = typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV;
 const STORAGE_KEY = 'website-os.vfs';
 
-type StorageLike = {
-  getItem(key: string): string | null;
-  setItem(key: string, value: string): void;
-  removeItem(key: string): void;
-};
+let __testStorage: Storage | null = null;
+let __memoryStorage: Storage | null = null;
 
-// Fallback storage for non-browser test environments
-const inMemoryStorage: Record<string, string> = {};
-function getStorage(): StorageLike {
+export function __setStorageForTests(storage: Storage | null): void {
+  __testStorage = storage;
+}
+
+export function __resetForTests(): void {
+  cachedRoot = null;
+  try {
+    (__memoryStorage as any)?.clear?.();
+  } catch {}
+}
+
+function getStorage(): Storage {
+  if (__testStorage) return __testStorage;
   const g: any = (typeof globalThis !== 'undefined' ? (globalThis as any) : {});
-  const ls = g?.localStorage as StorageLike | undefined;
+  const ls: Storage | undefined = g?.localStorage as Storage | undefined;
   if (ls && typeof ls.getItem === 'function') return ls;
-  return {
-    getItem: (k) => (k in inMemoryStorage ? inMemoryStorage[k] : null),
-    setItem: (k, v) => {
-      inMemoryStorage[k] = v;
-    },
-    removeItem: (k) => {
-      delete inMemoryStorage[k];
-    },
-  };
+  if (!__memoryStorage) {
+    const map = new Map<string, string>();
+    __memoryStorage = {
+      getItem: (k: string) => (map.has(k) ? map.get(k)! : null),
+      setItem: (k: string, v: string) => void map.set(k, String(v)),
+      removeItem: (k: string) => void map.delete(k),
+      clear: () => void map.clear(),
+      key: (i: number) => Array.from(map.keys())[i] ?? null,
+      get length() {
+        return map.size;
+      },
+    } as unknown as Storage;
+  }
+  return __memoryStorage as Storage;
 }
 
 let cachedRoot: VfsRoot | null = null;

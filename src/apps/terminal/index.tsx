@@ -14,7 +14,7 @@ export default function TerminalApp(): JSX.Element {
   const { eraId, isForced, setEraForDev, userPrefs } = useEra();
   const [lines, setLines] = useState<Line[]>([{ id: 0, text: 'Type help to begin.' }]);
   useEffect(() => {
-    if (import.meta.env.DEV) console.log('[TerminalApp] mounted');
+    if (import.meta.env.DEV) { console.log('[TerminalApp] mounted'); console.log('[Terminal-OS OG] styles active'); }
   }, []);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);

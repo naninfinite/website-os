@@ -1,11 +1,10 @@
 /* SUMMARY: Era-specific overrides keyed by body theme class. */
 
 .theme-terminal {
-  --background: 11 14 16;
-  --surface: 11 14 16;
-  --surface-2: 26 31 36;
-  --text: 168 255 96;
-  --accent: 94 255 0;
+  /* Font & subtle global bindings for OG */
+  font-family: var(--mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   --arcade-fg: var(--crt-green);
   --arcade-bg: var(--crt-bg);
 }

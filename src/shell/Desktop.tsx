@@ -31,7 +31,7 @@ export function Desktop(props: { era: EraId }): JSX.Element {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
-  if (import.meta.env.DEV) console.log('[Desktop] render: wm-underlay + windows');
+  if (import.meta.env.DEV) { console.log('[Desktop] render: wm-underlay + windows'); console.log('[Terminal-OS OG] styles active'); }
   return (
     <div className="desktop-root">
       {/* Window layer (overlay) */}

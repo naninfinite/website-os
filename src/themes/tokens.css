@@ -39,12 +39,23 @@ html, body, #root { height: 100%; }
   --duration-slow: 320ms;
 }
 
-/* Terminal-OS: high-contrast CRT-esque */
-body[data-era="terminal-os"] {
-  --surface: 5 5 7;
-  --surface-2: 12 12 16;
-  --text: 210 255 210; /* greenish */
-  --accent: 80 255 140;
+/* Terminal-OS: OG phosphor green on black */
+.theme-terminal {
+  --bg: #000000;
+  --fg: #00ff66;
+  --border-hex: #00ff66;
+  --accent-hex: #00ff66;
+  --taskbar-bg-hex: #001100;
+  --taskbar-border-hex: #00ff66;
+  --icon-label-fg-hex: #66ffcc;
+  --mono: 'IBM Plex Mono', 'Iosevka Term', 'Courier New', monospace;
+
+  /* RGB triplets used by components */
+  --background: 0 0 0;
+  --surface: 0 0 0;
+  --surface-2: 0 0 0;
+  --text: 0 255 102;
+  --accent: 0 255 102;
 }
 
 /* OS-91: classic gray UI */

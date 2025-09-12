@@ -39,7 +39,7 @@ export function Launcher(props: { open: boolean; onClose: () => void }): JSX.Ele
       role="dialog"
       aria-modal={true}
       aria-label="Launcher"
-      className="absolute inset-0 bg-foreground/20 backdrop-blur-[2px] flex items-center justify-center"
+      className="launcher absolute inset-0 bg-foreground/20 backdrop-blur-[2px] flex items-center justify-center"
       onClick={(e) => {
         if (e.target === containerRef.current) onClose();
       }}

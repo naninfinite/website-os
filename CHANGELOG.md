@@ -34,6 +34,8 @@ All notable changes to this project will be documented here, following [Keep a C
 - test(vfs): add localVfs persistence tests (storage DI + module reset)
 ### FileMan
 - FileMan.EXE v1: create folder, inline rename, delete, multi-select, keyboard shortcuts, status bar
+### Terminal-OS
+- Terminal-OS: restore OG visual style (pixel-perfect parity)
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
  - Desktop: added guard in Enter key handler (prevents crash when no icons available).

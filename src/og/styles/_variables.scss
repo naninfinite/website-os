@@ -1,0 +1,16 @@
+// SUMMARY
+// OG Terminal-OS SCSS variables used by Landing/AppShell/Desktop/StatusBar.
+// Centralizes phosphor green, black background, border thickness, and spacing.
+
+$og-green: #00ff66;
+$og-black: #000000;
+$og-status-bg: #001100;
+$og-border-2: 2px;
+$og-border-1: 1px;
+$og-letter-spacing: 0.05em;
+$og-font-mono: 'IBM Plex Mono', 'Iosevka Term', 'Courier New', monospace;
+
+$og-taskbar-height: 28px;
+$og-padding-sm: 6px;
+$og-padding-md: 8px;
+$og-gap: 12px;

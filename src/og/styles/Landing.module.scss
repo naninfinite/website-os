@@ -1,0 +1,23 @@
+// SUMMARY: Fullscreen landing with video/poster and [ ENTER ] CTA.
+@use './_variables' as *;
+
+.root {
+  min-height: 100dvh;
+  background: $og-black;
+  color: $og-green;
+  display: grid;
+  place-items: center;
+}
+
+.videoBg {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  filter: saturate(0.8) contrast(1.1) brightness(0.8);
+}
+
+.panel { position: relative; z-index: 1; display: grid; gap: $og-gap; place-items: center; }
+.cta {
+  border: $og-border-2 solid $og-green; background: transparent; color: $og-green;
+  padding: $og-padding-sm $og-padding-md; cursor: pointer; text-transform: uppercase;
+}
+.cta:focus { outline: 2px dashed $og-green; outline-offset: 2px; }

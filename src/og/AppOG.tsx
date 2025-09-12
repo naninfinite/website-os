@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppShell } from './AppShell';
 import { Landing } from './Landing';
+import { WindowManagerOG } from './WindowManagerOG';
 import { DesktopOG } from './Desktop';
 
 export default function AppOG(): JSX.Element {
@@ -19,7 +20,9 @@ export default function AppOG(): JSX.Element {
       {phase === 'landing' ? (
         <Landing onEnter={() => setPhase('desktop')} />
       ) : (
-        <DesktopOG />
+        <WindowManagerOG>
+          <DesktopOG />
+        </WindowManagerOG>
       )}
     </AppShell>
   );

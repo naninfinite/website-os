@@ -5,6 +5,8 @@
  */
 import React, { useEffect, useState } from 'react';
 import styles from './styles/Desktop.module.scss';
+import { OG_PANELS } from './panels';
+import { useOgWindows } from './WindowManagerOG';
 
 function useClock(): string {
   const [now, setNow] = useState<Date>(new Date());
@@ -17,13 +19,21 @@ function useClock(): string {
 
 export function DesktopOG(): JSX.Element {
   const time = useClock();
+  const {openWindow} = useOgWindows();
+  
   return (
     <div className={styles.root}>
       <div className={styles.grid}>
-        <div className={styles.card} aria-label="HOME.EXE">HOME.EXE</div>
-        <div className={styles.card} aria-label="CONNECT.EXE">CONNECT.EXE</div>
-        <div className={styles.card} aria-label="DIMENSION.EXE">Dimension.EXE</div>
-        <div className={styles.card} aria-label="?.EXE">?.EXE</div>
+      {OG_PANELS.map(panel => (
+  <button
+    key={panel.id}
+    className={styles.card}
+    onClick={() => openWindow(panel.id, panel.exeName)}
+    aria-label={`Open ${panel.exeName}`}
+  >
+    {panel.label}
+  </button>
+))}
       </div>
       <footer className={styles.statusBar} role="status" aria-live="polite">
         <div>READY</div>

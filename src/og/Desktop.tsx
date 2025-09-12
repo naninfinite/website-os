@@ -20,10 +20,10 @@ export function DesktopOG(): JSX.Element {
   return (
     <div className={styles.root}>
       <div className={styles.grid}>
-        <div className={styles.card} aria-label="ME">ME</div>
-        <div className={styles.card} aria-label="YOU">YOU</div>
-        <div className={styles.card} aria-label="THIRD">THIRD</div>
-        <div className={styles.card} aria-label="CONNECT">CONNECT</div>
+        <div className={styles.card} aria-label="HOME.EXE">HOME.EXE</div>
+        <div className={styles.card} aria-label="CONNECT.EXE">CONNECT.EXE</div>
+        <div className={styles.card} aria-label="DIMENSION.EXE">Dimension.EXE</div>
+        <div className={styles.card} aria-label="?.EXE">?.EXE</div>
       </div>
       <footer className={styles.statusBar} role="status" aria-live="polite">
         <div>READY</div>

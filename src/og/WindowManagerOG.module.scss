@@ -1,0 +1,27 @@
+.layerRoot { position: relative;}
+
+.window {
+    color: var(--crt-green);
+    background: rgba(0,0,0,0.85);
+    border: 2px solid var(--crt-green);
+    box-shadow: 0 0 0 1px var(--crt-green) inset;
+}
+
+.titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--crt-green);
+    font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.close {
+    background: transparent;
+    color: inherit;
+    border: 1px solid var(--crt-green);
+    cursor: pointer;
+    padding: 0 6px;
+}
+
+.body { padding: 10px; }

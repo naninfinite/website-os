@@ -9,10 +9,20 @@ A living, retro-futurist portfolio OS that evolves through three **eras**:
 A public **countdown** flips the active era with a **reboot animation**.
 
 ## Quick Start
+Requires Node 20.19+ (or 22.12+). Use `.nvmrc` to switch.
 ```bash
 pnpm i      # or: npm i
 pnpm dev    # or: npm run dev
 Run locally: Vite dev server runs on `http://localhost:5173` by default. Use `npm run preview` for a production preview.
+
+### OG Baseline (default)
+- Landing screen with video/poster background; press Enter or click [ ENTER ] to continue.
+- AppShell with CRT scanlines overlay (non-interactive overlay layer).
+- Desktop: 2×2 panels — ME / YOU / THIRD / CONNECT (placeholders).
+- StatusBar with live clock.
+- Retro green cursor hover enlarge, respects reduced-motion.
+
+Disable OG-only mode by setting `VITE_OG_ONLY=false` in `.env.local`.
 
 Docs
 	•	PRD (spec): docs/dev/PRD.md

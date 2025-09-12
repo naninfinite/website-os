@@ -8,8 +8,6 @@ import { createRoot } from 'react-dom/client';
 import './themes/tokens.css';
 import './themes/eraThemes.css';
 import './styles/index.css';
-import { App } from './App';
-import AppOG from './og/AppOG';
 
 console.log('[env]', import.meta.env.VITE_FORCE_ERA, 'OG_ONLY=', import.meta.env.VITE_OG_ONLY);
 
@@ -19,11 +17,24 @@ if (!rootElement) {
 }
 
 const useOg = String(import.meta.env.VITE_OG_ONLY ?? 'true').toLowerCase() !== 'false';
+const root = createRoot(rootElement);
 
-createRoot(rootElement).render(
-  <React.StrictMode>
-    {useOg ? <AppOG /> : <App />}
-  </React.StrictMode>
-);
+(async () => {
+  if (useOg) {
+    const mod = await import('./og/AppOG');
+    root.render(
+      <React.StrictMode>
+        <mod.default />
+      </React.StrictMode>
+    );
+  } else {
+    const mod = await import('./App');
+    root.render(
+      <React.StrictMode>
+        <mod.App />
+      </React.StrictMode>
+    );
+  }
+})();
 
 

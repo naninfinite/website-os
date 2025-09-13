@@ -6,6 +6,10 @@ All notable changes to this project will be documented here, following [Keep a C
 - ADR-TERMINAL-SCOPE to lock Terminal.EXE intent and whitelist behavior (PR-3)
 - Tests: Terminal parser whitelist + UI prompt snapshot (PR-3)
 - README: Terminal section with scope and command table (PR-3)
+- Unknown command handling: parser responds with `Unknown command: <cmd>. Type 'help'` (PR-3)
+- Deterministic VFS node IDs: generate stable, reproducible IDs for seeded and created nodes (PR-4)
+- Atomic writes with rollback for `localVfs` persistence: ensure either full commit or automatic rollback on failure (PR-4)
+- Robust `localVfs.reset()` seeded from `/public/content/vfs.json` with validation and fallback behavior (PR-4)
 - Refactored `appMeta` exports into dedicated `meta.ts` files per app  
 - Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings  
 - Settings.EXE with theme, wallpaper, accessibility, and gesture toggles
@@ -33,8 +37,20 @@ All notable changes to this project will be documented here, following [Keep a C
  - CountdownBadge (DEBUG_COUNT) logs mount/unmount and era/next changes.
  - HomeDashboard (DEBUG_HOME) logs Terminal/Dimension card clicks.
  - FileMan.EXE: add File Manager MVP with in-memory VFS (`public/content/vfs.json`), list/icons views, breadcrumb navigation, and preview.
+
+### Changed
+- Hardened OG Desktop/Dock tests to avoid ambiguous queries (PR-3)
+- Vitest: switch to `jsdom` environment and add `@testing-library/jest-dom` setup (PR-3)
+- `localVfs` persistence: enforce atomic write semantics and deterministic IDs for nodes (PR-4)
+
+### Documentation
+- README: expanded Terminal section with scope, prompt, and command table (PR-3)
+- docs/log/2025-09-13.md: added PR-3 updates (ADR + tests + docs)
+- docs/log/2025-09-14.md: added PR-4 VFS hardening entry (seed/reset/atomic writes) (PR-4)
+
 ### Tests
 - test(vfs): add localVfs persistence tests (storage DI + module reset)
+
 ### FileMan
 - FileMan.EXE v1: create folder, inline rename, delete, multi-select, keyboard shortcuts, status bar
 ### Terminal-OS
@@ -44,11 +60,11 @@ All notable changes to this project will be documented here, following [Keep a C
 ### OG Desktop
 - Wire `DesktopOG` into `WindowManagerOG`; add CRT-styled window stubs (HOME/CONNECT/DIMENSION/?.EXE)
 ### Fixed
- - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
- - Desktop: added guard in Enter key handler (prevents crash when no icons available).
- - CountdownBadge: DEBUG_COUNT logs for mount/unmount and state changes.
- - HomeDashboard/DesktopHomePanel: DEBUG_HOME logs for Terminal/Dimension card clicks.
- - Desktop Enter key press no longer crashes when no icons are present.
+- Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
+- Desktop: added guard in Enter key handler (prevents crash when no icons available).
+- CountdownBadge: DEBUG_COUNT logs for mount/unmount and state changes.
+- HomeDashboard/DesktopHomePanel: DEBUG_HOME logs for Terminal/Dimension card clicks.
+- Desktop Enter key press no longer crashes when no icons are present.
 
 ---
 

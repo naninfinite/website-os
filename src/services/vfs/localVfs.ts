@@ -6,6 +6,7 @@
 
 import type { VfsFile, VfsFolder, VfsNode, VfsPath, VfsRoot } from './types';
 import * as seedVfs from './memoryVfs';
+import { ulid, seedIdForPath } from './id';
 
 const DEBUG_LOCAL_VFS = typeof import.meta !== 'undefined' && (import.meta as any).env?.DEV;
 const STORAGE_KEY = 'website-os.vfs';
@@ -73,19 +74,72 @@ function findInFolder(folder: VfsFolder, segs: string[], idx = 0): VfsNode | und
   return idx === segs.length - 1 ? child : undefined;
 }
 
-let customIdGenerator: (() => string) | null = null;
-export function __setIdGenerator(gen: (() => string) | null): void {
-  customIdGenerator = gen;
+function assertFolderAtPathIn(root: VfsRoot, path: VfsPath): VfsFolder {
+  const segs = segments(path);
+  if (segs.length === 0) return root;
+  const node = findInFolder(root, segs);
+  if (!node || node.kind !== 'folder') throw new Error(`Folder not found: ${path}`);
+  return node as VfsFolder;
 }
 
-function generateId(prefix = 'u'): string {
-  if (customIdGenerator) return customIdGenerator();
-  const salt = Math.random().toString(36).slice(2, 8);
-  return `${prefix}-${Date.now().toString(36)}-${salt}`;
+function findFolderAndParentByIdIn(root: VfsRoot, id: VfsId): { parent: VfsFolder | null; folder: VfsFolder } | null {
+  if (root.id === id) return { parent: null, folder: root };
+  type StackItem = { parent: VfsFolder | null; node: VfsNode };
+  const stack: StackItem[] = [{ parent: null, node: root }];
+  while (stack.length) {
+    const cur = stack.shift()!;
+    if (cur.node.kind === 'folder') {
+      for (const child of cur.node.children) {
+        if (child.kind === 'folder') {
+          if (child.id === id) return { parent: cur.node, folder: child };
+          stack.push({ parent: cur.node, node: child });
+        }
+      }
+    }
+  }
+  return null;
 }
 
 // Additive ID alias used by wrappers
 export type VfsId = string;
+
+function canonicalizePath(parts: string[]): string {
+  return '/' + parts.filter(Boolean).join('/');
+}
+
+function assignStableIdsFromSeed(root: VfsRoot): VfsRoot {
+  // Depth-first traversal assigning ids where missing based on canonical path
+  function walk(node: VfsNode, pathParts: string[]): void {
+    const thisPath = node.kind === 'folder' ? canonicalizePath(pathParts) : canonicalizePath(pathParts);
+    if (!node.id || node.id.trim().length === 0) {
+      (node as any).id = seedIdForPath(thisPath);
+    }
+    if (node.kind === 'folder') {
+      for (const child of node.children) {
+        walk(child, [...pathParts, child.name]);
+      }
+    }
+  }
+  walk(root, []);
+  return root;
+}
+
+function persistAtomic(nextRoot: VfsRoot, previousRaw: string | null): void {
+  const storage = getStorage();
+  const rawNext = JSON.stringify(nextRoot);
+  try {
+    storage.setItem(STORAGE_KEY, rawNext);
+    cachedRoot = nextRoot;
+  } catch (err) {
+    if (previousRaw == null) {
+      storage.removeItem(STORAGE_KEY);
+    } else {
+      storage.setItem(STORAGE_KEY, previousRaw);
+    }
+    cachedRoot = previousRaw ? (JSON.parse(previousRaw) as VfsRoot) : null;
+    throw err;
+  }
+}
 
 export async function loadSeeds(): Promise<VfsRoot> {
   if (cachedRoot) return cachedRoot;
@@ -104,7 +158,8 @@ export async function loadSeeds(): Promise<VfsRoot> {
   }
   const seeds = await seedVfs.loadSeeds();
   // Clone so subsequent mutations do not affect the seed cache
-  cachedRoot = cloneNode(seeds);
+  const hydrated = assignStableIdsFromSeed(cloneNode(seeds));
+  cachedRoot = hydrated;
   return cachedRoot;
 }
 
@@ -115,7 +170,8 @@ export function clearVfsCache(): void {
 function persist(): void {
   if (!cachedRoot) return;
   const storage = getStorage();
-  storage.setItem(STORAGE_KEY, JSON.stringify(cachedRoot));
+  const prev = storage.getItem(STORAGE_KEY);
+  persistAtomic(cachedRoot, prev);
 }
 
 export function reset(): void {
@@ -197,9 +253,13 @@ export function mkdir(pathOrId: string, name: string): VfsFolder | Promise<VfsId
     const target = assertFolderAtPath(pathOrId);
     if (!name || /\//.test(name)) throw new Error('Invalid folder name');
     if (target.children.some((c) => c.name === name)) throw new Error('Name already exists');
-    const folder: VfsFolder = { id: generateId('dir'), name, kind: 'folder', children: [] };
-    target.children.push(folder);
-    persist();
+    const folder: VfsFolder = { id: ulid(), name, kind: 'folder', children: [] };
+    const snapshot = cloneNode(cachedRoot);
+    const targetSnap = assertFolderAtPathIn(snapshot, pathOrId);
+    targetSnap.children.push(folder);
+    const prev = getStorage().getItem(STORAGE_KEY);
+    persistAtomic(snapshot, prev);
+    cachedRoot = snapshot;
     return folder;
   }
   // ID-based wrapper: ensures unique sibling name and returns new id
@@ -207,9 +267,14 @@ export function mkdir(pathOrId: string, name: string): VfsFolder | Promise<VfsId
   if (!found) return Promise.reject(new Error('Parent not found'));
   const parent = found.folder;
   const unique = ensureUniqueName(parent, name);
-  const folder: VfsFolder = { id: generateId('dir'), name: unique, kind: 'folder', children: [] };
-  parent.children.push(folder);
-  persist();
+  const folder: VfsFolder = { id: ulid(), name: unique, kind: 'folder', children: [] };
+  const snapshot = cloneNode(cachedRoot);
+  const foundSnap = findFolderAndParentByIdIn(snapshot, pathOrId as VfsId);
+  if (!foundSnap) return Promise.reject(new Error('Parent not found'));
+  foundSnap.folder.children.push(folder);
+  const prev = getStorage().getItem(STORAGE_KEY);
+  persistAtomic(snapshot, prev);
+  cachedRoot = snapshot;
   return Promise.resolve(folder.id);
 }
 
@@ -218,9 +283,13 @@ export function createFile(path: VfsPath, name: string, init?: Partial<Omit<VfsF
   const target = assertFolderAtPath(path);
   if (!name || /\//.test(name)) throw new Error('Invalid file name');
   if (target.children.some((c) => c.name === name)) throw new Error('Name already exists');
-  const file: VfsFile = { id: generateId('file'), name, kind: 'file', mime: init?.mime, href: init?.href, meta: init?.meta };
-  target.children.push(file);
-  persist();
+  const file: VfsFile = { id: ulid(), name, kind: 'file', mime: init?.mime, href: init?.href, meta: init?.meta };
+  const snapshot = cloneNode(cachedRoot);
+  const targetSnap = assertFolderAtPathIn(snapshot, path);
+  targetSnap.children.push(file);
+  const prev = getStorage().getItem(STORAGE_KEY);
+  persistAtomic(snapshot, prev);
+  cachedRoot = snapshot;
   return file;
 }
 
@@ -239,9 +308,25 @@ export function renameById(id: string, newName: string): VfsNode {
       if (cur.parent.children.some((c) => c !== cur.node && c.name === newName)) {
         throw new Error('Name already exists');
       }
-      (cur.node as any).name = newName;
-      persist();
-      return cur.node;
+      // Perform rename on snapshot for atomicity
+      const snapshot = cloneNode(cachedRoot);
+      // DFS on snapshot
+      type SItem = { parent: VfsFolder | null; node: VfsNode };
+      const stack2: SItem[] = [{ parent: null, node: snapshot } as any];
+      while (stack2.length) {
+        const c2 = stack2.shift()!;
+        if (c2.node.id === id) {
+          if (!c2.parent) throw new Error('Cannot rename root');
+          if (c2.parent.children.some((c) => c !== c2.node && c.name === newName)) throw new Error('Name already exists');
+          (c2.node as any).name = newName;
+          const prev = getStorage().getItem(STORAGE_KEY);
+          persistAtomic(snapshot, prev);
+          cachedRoot = snapshot;
+          return c2.node;
+        }
+        if (c2.node.kind === 'folder') for (const ch of c2.node.children) stack2.push({ parent: c2.node, node: ch });
+      }
+      throw new Error('Node not found');
     }
     if (cur.node.kind === 'folder') {
       for (const child of cur.node.children) stack.push({ parent: cur.node, node: child });
@@ -259,8 +344,25 @@ export function deleteById(id: string): void {
     if (cur.node.kind === 'folder') {
       const idx = cur.node.children.findIndex((c) => c.id === id);
       if (idx >= 0) {
-        cur.node.children.splice(idx, 1);
-        persist();
+        // Atomic delete via snapshot
+        const snapshot = cloneNode(cachedRoot);
+        // Locate parent/node in snapshot
+        type SItem = { parent: VfsFolder | null; node: VfsNode };
+        const stack2: SItem[] = [{ parent: null, node: snapshot } as any];
+        while (stack2.length) {
+          const c2 = stack2.shift()!;
+          if (c2.node.kind === 'folder') {
+            const idx2 = (c2.node as VfsFolder).children.findIndex((c) => c.id === id);
+            if (idx2 >= 0) {
+              (c2.node as VfsFolder).children.splice(idx2, 1);
+              const prev = getStorage().getItem(STORAGE_KEY);
+              persistAtomic(snapshot, prev);
+              cachedRoot = snapshot;
+              return;
+            }
+            for (const ch of (c2.node as VfsFolder).children) stack2.push({ parent: c2.node, node: ch });
+          }
+        }
         return;
       }
       for (const child of cur.node.children) stack.push({ parent: cur.node, node: child });

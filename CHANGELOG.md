@@ -3,6 +3,9 @@ All notable changes to this project will be documented here, following [Keep a C
 
 ## [Unreleased]
 ### Added
+- ADR-TERMINAL-SCOPE to lock Terminal.EXE intent and whitelist behavior (PR-3)
+- Tests: Terminal parser whitelist + UI prompt snapshot (PR-3)
+- README: Terminal section with scope and command table (PR-3)
 - Refactored `appMeta` exports into dedicated `meta.ts` files per app  
 - Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings  
 - Settings.EXE with theme, wallpaper, accessibility, and gesture toggles

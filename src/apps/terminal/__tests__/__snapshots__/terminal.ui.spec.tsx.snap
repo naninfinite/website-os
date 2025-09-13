@@ -1,0 +1,46 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Terminal.EXE UI > renders CRT prompt banner and echoes command (snapshot prompt) 1`] = `
+<DocumentFragment>
+  <div
+    class="terminal-root terminal"
+  >
+    <div
+      aria-live="polite"
+      class="terminal-screen"
+      role="log"
+    >
+      <div
+        class="terminal-line"
+      >
+        Type help to begin.
+      </div>
+    </div>
+    <form
+      class="terminal-input-row"
+    >
+      <label
+        class="sr-only"
+        for="terminal-input"
+      >
+        Terminal input
+      </label>
+      <span
+        aria-hidden="true"
+        class="terminal-prompt"
+      >
+        guest@website-os:terminal-os $ 
+      </span>
+      <input
+        aria-label="Terminal input, era terminal-os"
+        autocapitalize="off"
+        autocorrect="off"
+        class="terminal-input"
+        id="terminal-input"
+        spellcheck="false"
+        value=""
+      />
+    </form>
+  </div>
+</DocumentFragment>
+`;

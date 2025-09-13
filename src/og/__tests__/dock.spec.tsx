@@ -1,21 +1,22 @@
 /* @vitest-environment jsdom */
 import React from 'react';
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import { WindowManagerOG } from '../WindowManagerOG';
 import { DesktopOG } from '../Desktop';
 
 describe('DockOG behavior', () => {
-  it('renders all dock labels', () => {
+  it('renders all dock labels (dock region)', () => {
     render(
       <WindowManagerOG>
         <DesktopOG />
       </WindowManagerOG>
     );
-    expect(screen.getByRole('button', { name: /HOME\.EXE/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /CONNECT\.EXE/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /DIMENSION\.EXE/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /\?\.EXE/i })).toBeInTheDocument();
+    const dock = screen.getByRole('navigation', { name: /OG Dock/i });
+    expect(within(dock).getByRole('button', { name: /HOME\.EXE/i })).toBeInTheDocument();
+    expect(within(dock).getByRole('button', { name: /CONNECT\.EXE/i })).toBeInTheDocument();
+    expect(within(dock).getByRole('button', { name: /DIMENSION\.EXE/i })).toBeInTheDocument();
+    expect(within(dock).getByRole('button', { name: /\?\.EXE/i })).toBeInTheDocument();
   });
 
   it('open → active; minimize → hidden; restore via dock', () => {
@@ -26,8 +27,9 @@ describe('DockOG behavior', () => {
     );
 
     // open HOME via desktop tile
-    fireEvent.click(screen.getByRole('button', { name: /Open HOME\.EXE/i }));
-    const homeDock = screen.getAllByRole('button', { name: /HOME\.EXE/i })[0];
+    fireEvent.click(screen.getAllByRole('button', { name: /Open HOME\.EXE/i })[0]);
+    const dock = screen.getByRole('navigation', { name: /OG Dock/i });
+    const homeDock = within(dock).getByRole('button', { name: /HOME\.EXE/i });
     expect(homeDock).toHaveAttribute('aria-pressed', 'true');
 
     // minimize via window button

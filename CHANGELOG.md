@@ -3,6 +3,9 @@ All notable changes to this project will be documented here, following [Keep a C
 
 ## [Unreleased]
 ### Added
+- ADR-TERMINAL-SCOPE to lock Terminal.EXE intent and whitelist behavior (PR-3)
+- Tests: Terminal parser whitelist + UI prompt snapshot (PR-3)
+- README: Terminal section with scope and command table (PR-3)
 - Refactored `appMeta` exports into dedicated `meta.ts` files per app  
 - Updated `appRegistry` to import from `meta.ts` for type safety and to fix HMR warnings  
 - Settings.EXE with theme, wallpaper, accessibility, and gesture toggles
@@ -36,6 +39,10 @@ All notable changes to this project will be documented here, following [Keep a C
 - FileMan.EXE v1: create folder, inline rename, delete, multi-select, keyboard shortcuts, status bar
 ### Terminal-OS
 - Terminal-OS: restore OG visual style (pixel-perfect parity)
+### OG Baseline
+- Reset app surface to OG baseline (Landing → AppShell/CRT → Desktop 2×2 panels → StatusBar clock). OG-only mode default; set VITE_OG_ONLY=false to restore full OS.
+### OG Desktop
+- Wire `DesktopOG` into `WindowManagerOG`; add CRT-styled window stubs (HOME/CONNECT/DIMENSION/?.EXE)
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
  - Desktop: added guard in Enter key handler (prevents crash when no icons available).

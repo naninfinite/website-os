@@ -9,10 +9,20 @@ A living, retro-futurist portfolio OS that evolves through three **eras**:
 A public **countdown** flips the active era with a **reboot animation**.
 
 ## Quick Start
+Requires Node 20.19+ (or 22.12+). Use `.nvmrc` to switch.
 ```bash
 pnpm i      # or: npm i
 pnpm dev    # or: npm run dev
 Run locally: Vite dev server runs on `http://localhost:5173` by default. Use `npm run preview` for a production preview.
+
+### OG Baseline (default)
+- Landing screen with video/poster background; press Enter or click [ ENTER ] to continue.
+- AppShell with CRT scanlines overlay (non-interactive overlay layer).
+- Desktop: 2×2 panels — ME / YOU / THIRD / CONNECT (placeholders).
+- StatusBar with live clock.
+- Retro green cursor hover enlarge, respects reduced-motion.
+
+Disable OG-only mode by setting `VITE_OG_ONLY=false` in `.env.local`.
 
 Docs
 	•	PRD (spec): docs/dev/PRD.md
@@ -96,10 +106,25 @@ Optional: set `VITE_FORCE_ERA` to `terminal-os`, `os-91`, or `now-os` during loc
 - Loaders are implemented in `src/services/content/loaders.ts` and typed in `src/services/content/types.ts`.
 - Adding/changing content requires editing those JSON files; a production CMS (e.g., Supabase) can be integrated later to replace these loaders.
 
-## Terminal.EXE (toy shell)
+## Terminal.EXE (toy shell — scope locked)
 
-- Open Terminal.EXE and type `help`, `apps`, or `open about` to launch apps.
-- Useful commands: `help`, `apps`, `open <appId>`, `clear`, `echo <text>`, `time`, `era`, `theme <terminal-os|os-91|now-os>` (preview allowed when not forced).
+Terminal.EXE is a small, CRT-styled toy shell for discovery and fun. It is not the primary system shell. See ADR: `docs/decisions/ADR-TERMINAL-SCOPE.md`.
+
+- Prompt: `guest@website-os:<era> $ ` (e.g., `guest@website-os:terminal-os $ `)
+- Behavior: whitelisted commands only; unknown commands respond with `Unknown command: <cmd>. Type 'help'`.
+
+Commands (v1):
+
+| Command | Description |
+| --- | --- |
+| `help` | Show help with available commands |
+| `apps` | List registered apps from the App Registry |
+| `open <appId>` | Request opening an app by id (UI decides how/where) |
+| `clear` | Clear the terminal screen buffer |
+| `echo <text>` | Print text back |
+| `time` | Show current UTC and local time |
+| `era` | Show the active era (and preview availability) |
+| `theme <terminal-os|os-91|now-os>` | Preview an era when preview is allowed (disabled when `VITE_FORCE_ERA` is set) |
 
 ## Recents & File Browser
 - **Recents.EXE** (`src/apps/recents`): tracks recently opened apps and files, persists to localStorage, and surfaces a quick list. Uses `src/services/recents.ts`.

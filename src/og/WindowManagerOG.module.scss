@@ -1,0 +1,83 @@
+/**
+ * SUMMARY
+ * CRT-styled window manager for OG Desktop. Provides base window chrome
+ * (titlebar, close button, body) using theme CSS variables to match Terminal-OS.
+ * Classes are referenced by `WindowManagerOG.tsx`.
+ */
+
+.layerRoot {
+  position: relative;
+  min-height: 100%;
+}
+
+.window {
+  border: 2px solid var(--border-hex);
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: none;
+  border-radius: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--mono), ui-monospace, monospace;
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-hex);
+}
+
+.minimize {
+  appearance: none;
+  border: 2px solid var(--border-hex);
+  background: transparent;
+  color: var(--fg);
+  border-radius: 0;
+  padding: 2px 8px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
+.close {
+  appearance: none;
+  border: 2px solid var(--border-hex);
+  background: transparent;
+  color: var(--fg);
+  border-radius: 0;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.body {
+  padding: 8px;
+}
+
+.layerRoot { position: relative;}
+
+.window {
+    color: var(--crt-green);
+    background: rgba(0,0,0,0.85);
+    border: 2px solid var(--crt-green);
+    box-shadow: 0 0 0 1px var(--crt-green) inset;
+}
+
+.titlebar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--crt-green);
+    font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+}
+
+.close {
+    background: transparent;
+    color: inherit;
+    border: 1px solid var(--crt-green);
+    cursor: pointer;
+    padding: 0 6px;
+}
+
+.body { padding: 10px; }

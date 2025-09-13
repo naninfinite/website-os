@@ -96,11 +96,16 @@ const OgWindow: React.FC<{
 
 const OgWindowBody: React.FC<{ app: PanelId }> = ({ app }) => {
   switch (app) {
-    case "home":      return <div>HOME.EXE — intro coming soon.</div>;
-    case "connect":   return <div>CONNECT.EXE — contact & links coming soon.</div>;
-    case "dimension": return <DimensionStub />;
-    case "unknown":   return <div>?.EXE — TBD.</div>;
-    default:          return null;
+    case "home":
+      return <div>file manager coming soon</div>;
+    case "connect":
+      return <div>multiplayer coming soon</div>;
+    case "dimension":
+      return <DimensionStub />;
+    case "unknown":
+      return <div>TBD</div>;
+    default:
+      return null;
   }
 };
 

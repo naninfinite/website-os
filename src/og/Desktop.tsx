@@ -24,16 +24,16 @@ export function DesktopOG(): JSX.Element {
   return (
     <div className={styles.root}>
       <div className={styles.grid}>
-      {OG_PANELS.map(panel => (
-  <button
-    key={panel.id}
-    className={styles.card}
-    onClick={() => openWindow(panel.id, panel.exeName)}
-    aria-label={`Open ${panel.exeName}`}
-  >
-    {panel.label}
-  </button>
-))}
+        {OG_PANELS.map(panel => (
+          <button
+            key={panel.id}
+            className={styles.card}
+            onClick={() => openWindow(panel.id, panel.exeName)}
+            aria-label={`Open ${panel.exeName}`}
+          >
+            {panel.label}
+          </button>
+        ))}
       </div>
       <footer className={styles.statusBar} role="status" aria-live="polite">
         <div>READY</div>

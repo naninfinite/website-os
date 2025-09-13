@@ -38,6 +38,8 @@ All notable changes to this project will be documented here, following [Keep a C
 - Terminal-OS: restore OG visual style (pixel-perfect parity)
 ### OG Baseline
 - Reset app surface to OG baseline (Landing → AppShell/CRT → Desktop 2×2 panels → StatusBar clock). OG-only mode default; set VITE_OG_ONLY=false to restore full OS.
+### OG Desktop
+- Wire `DesktopOG` into `WindowManagerOG`; add CRT-styled window stubs (HOME/CONNECT/DIMENSION/?.EXE)
 ### Fixed
  - Windowing provider placement and unified `useWindowing` import path; resolved provider runtime error
  - Desktop: added guard in Enter key handler (prevents crash when no icons available).

@@ -1,3 +1,48 @@
+/**
+ * SUMMARY
+ * CRT-styled window manager for OG Desktop. Provides base window chrome
+ * (titlebar, close button, body) using theme CSS variables to match Terminal-OS.
+ * Classes are referenced by `WindowManagerOG.tsx`.
+ */
+
+.layerRoot {
+  position: relative;
+  min-height: 100%;
+}
+
+.window {
+  border: 2px solid var(--border-hex);
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: none;
+  border-radius: 0;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--mono), ui-monospace, monospace;
+}
+
+.titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--border-hex);
+}
+
+.close {
+  appearance: none;
+  border: 2px solid var(--border-hex);
+  background: transparent;
+  color: var(--fg);
+  border-radius: 0;
+  padding: 2px 8px;
+  cursor: pointer;
+}
+
+.body {
+  padding: 8px;
+}
+
 .layerRoot { position: relative;}
 
 .window {

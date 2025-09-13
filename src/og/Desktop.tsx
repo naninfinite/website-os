@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './styles/Desktop.module.scss';
 import { OG_PANELS } from './panels';
+import { DockOG } from './DockOG';
 import { useOgWindows } from './WindowManagerOG';
 
 function useClock(): string {
@@ -34,6 +35,9 @@ export function DesktopOG(): JSX.Element {
             {panel.label}
           </button>
         ))}
+      </div>
+      <div>
+        <DockOG />
       </div>
       <footer className={styles.statusBar} role="status" aria-live="polite">
         <div>READY</div>

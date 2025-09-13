@@ -29,6 +29,17 @@
   border-bottom: 1px solid var(--border-hex);
 }
 
+.minimize {
+  appearance: none;
+  border: 2px solid var(--border-hex);
+  background: transparent;
+  color: var(--fg);
+  border-radius: 0;
+  padding: 2px 8px;
+  cursor: pointer;
+  margin-right: 6px;
+}
+
 .close {
   appearance: none;
   border: 2px solid var(--border-hex);
